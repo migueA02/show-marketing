@@ -17,10 +17,17 @@ import Image from "next/image";
  * - Se respetan colores existentes del diseño.
  */
 export default function ChismesitosSection() {
+  /**
+   * Control de animación al entrar al viewport.
+   */
   const [isVisible, setIsVisible] = useState(false);
+  /**
+   * Ref del section para IntersectionObserver.
+   */
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // Activa la animación una vez que la sección se hace visible.
     const observer = new IntersectionObserver(
       ([entry]) => entry.isIntersecting && setIsVisible(true),
       { threshold: 0.1 }
@@ -41,31 +48,33 @@ export default function ChismesitosSection() {
     >
       <div
         className={[
-          "w-full flex flex-col items-center",
+          "w-full max-w-[1200px] mx-auto flex flex-col items-center",
           "px-4 md:px-8 lg:px-12",
           isVisible ? "animate-fade-in-up" : "opacity-0",
         ].join(" ")}
       >
-        {/* Bloque de título: más grande, más ancho y más compacto */}
-        <div className="w-full max-w-[520px] text-center">
+        {/* Bloque de título: ajuste de tracking y ancho para equilibrar líneas */}
+        <div className="w-full max-w-[780px] text-center mx-auto">
           <p
             className={[
+              "w-full max-w-[360px] sm:max-w-[520px] md:max-w-[700px] mx-auto",
               "text-[#7e1ad2] uppercase font-black",
-              "tracking-[-0.015em]",
-              "text-[28px] sm:text-[34px] md:text-[38px] lg:text-[44px]",
+              "tracking-[0.12em] sm:tracking-[0.09em] md:tracking-[0.06em] lg:tracking-[0.04em]",
+              "text-[30px] sm:text-[36px] md:text-[42px] lg:text-[50px]",
               "leading-[0.95]",
               "m-0 p-0",
             ].join(" ")}
-            style={{ fontFamily: "Colfax, sans-serif" }}
+            style={{ fontFamily: "Acumin Pro, sans-serif", fontWeight: 600 }}
           >
             CHISMESITOS DE
           </p>
 
           <h2
             className={[
+              "w-full max-w-[360px] sm:max-w-[520px] md:max-w-[700px] mx-auto",
               "text-[#ff29ab] uppercase font-black",
               "tracking-[-0.03em]",
-              "text-[56px] sm:text-[68px] md:text-[78px] lg:text-[92px]",
+              "text-[88px] sm:text-[92px] md:text-[110px] lg:text-[128px]",
               "leading-[0.9]",
               "-mt-2 sm:-mt-3",
               "m-0 p-0",
@@ -76,8 +85,8 @@ export default function ChismesitosSection() {
           </h2>
         </div>
 
-        {/* Tarjeta unificada: imagen + botón (más pegada) */}
-        <div className="mt-5 w-full max-w-[320px] sm:max-w-[360px] md:max-w-[420px] lg:max-w-[460px]">
+        {/* Tarjeta unificada: imagen + botón sin separación visible */}
+        <div className="-mt-12 sm:-mt-10 md:-mt-14 lg:-mt-18 w-full max-w-[320px] sm:max-w-[360px] md:max-w-[420px] lg:max-w-[460px] relative z-10 motion-lift">
           {/* Imagen */}
           <div className="w-full aspect-3/4 relative overflow-hidden rounded-t-xl -mb-4 lg:-mb-6">
 
@@ -91,7 +100,7 @@ export default function ChismesitosSection() {
             />
           </div>
 
-          {/* Botón como extensión de la imagen (sin separación) */}
+          {/* CTA directa al canal; la imagen actúa como cabecera de la tarjeta */}
           <button
             type="button"
             onClick={() => {
@@ -101,13 +110,14 @@ export default function ChismesitosSection() {
             className={[
               "w-full",
               "bg-[#7e1ad2] text-white",
-              "py-4 sm:py-5 md:py-6",
-              "rounded-b-xl",
+              "py-2 sm:py-2.5 md:py-3",
+              "rounded-xl",
               "uppercase tracking-wide",
               "hover:opacity-90 transition-opacity",
               "flex items-center justify-center gap-3",
-              "text-sm sm:text-base md:text-lg",
+              "text-xl sm:text-2xl md:text-3xl lg:text-4xl",
               "font-semibold",
+              "pulse-cta",
             ].join(" ")}
           >
             {/* Instagram */}
@@ -119,7 +129,9 @@ export default function ChismesitosSection() {
               className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
             />
 
-            <span>UNITE AL CANAL</span>
+            <span style={{ fontFamily: "Colfax, sans-serif" }}>
+              UNITE AL CANAL
+            </span>
 
             {/* Flecha */}
             <Image

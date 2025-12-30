@@ -266,7 +266,8 @@ export default function Header() {
                         "block w-full px-5 py-3",
                         "font-black uppercase tracking-tight",
                         "text-[#171717]",
-                        "hover:bg-black/5 transition-colors",
+                        "transition-opacity",
+                        "hover:opacity-80",
                         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff29ab] focus-visible:ring-inset",
                       ].join(" ")}
                     >

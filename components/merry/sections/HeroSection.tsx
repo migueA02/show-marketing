@@ -42,7 +42,7 @@ const Sparkle = ({ className }: { className?: string }) => (
 export default function HeroSection() {
   return (
     <section id="hero" className="w-full bg-[#ffd44a] flex flex-col relative">
-      {/* Contenido principal del hero */}
+      {/* Contenedor principal del hero con texto y destellos */}
       <div className="flex flex-col items-center px-4 pt-8 sm:pt-12 md:pt-16 lg:pt-20 max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto">
         {/* Contenedor del texto con destellos - relative exclusivo para evitar colisiones */}
         <div className="relative w-full mb-6 sm:mb-8 md:mb-10 lg:mb-12">
@@ -74,14 +74,14 @@ export default function HeroSection() {
           </div>
 
           {/* Contenedor del texto - centrado, compacto verticalmente, con padding para evitar colisiones */}
-          <div className="relative z-10 text-center px-12 sm:px-16 md:px-20 lg:px-24 py-8 sm:py-12 md:py-16 lg:py-20">
+          <div className="relative z-10 text-center px-6 sm:px-12 md:px-16 lg:px-24 py-6 sm:py-10 md:py-14 lg:py-16">
             <h1
               className="text-[#ff29ab] uppercase font-black animate-fade-in-up"
               style={{
                 fontFamily: "Colfax, sans-serif",
-                fontSize: "clamp(2rem, 8vw, 4.5rem)",
-                letterSpacing: "-0.02em",
-                lineHeight: "1.1",
+                fontSize: "clamp(2.5rem, 10vw, 5rem)",
+                letterSpacing: "-0.03em",
+                lineHeight: "0.95",
               }}
             >
               BIENVENIDOS
@@ -99,7 +99,7 @@ export default function HeroSection() {
           alt="Doña Merry - Imagen principal del hero"
           width={800}
           height={590}
-          className="w-full h-auto max-w-2xl md:max-w-3xl lg:max-w-4xl object-contain"
+          className="w-full h-auto max-w-3xl md:max-w-4xl lg:max-w-5xl object-contain"
           priority
         />
       </div>

@@ -16,7 +16,13 @@ import Image from "next/image";
  * - Mobile-first, compacto
  */
 export default function SocialStatsSection() {
+  /**
+   * Control de animación al entrar en viewport.
+   */
   const [isVisible, setIsVisible] = useState(false);
+  /**
+   * Ref del section para IntersectionObserver.
+   */
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -40,6 +46,9 @@ export default function SocialStatsSection() {
     };
   }, []);
 
+  /**
+   * Datos de plataformas y rutas de icono; sustituir para actualizar métricas.
+   */
   const socialPlatforms = [
     { name: "Facebook", icon: "FB", image: "/img/merry/Facebook.png" },
     { name: "YouTube", icon: "YT", image: "/img/merry/Youtube.png" },
@@ -51,22 +60,22 @@ export default function SocialStatsSection() {
     <section
       id="social-stats"
       ref={sectionRef}
-      className="w-full bg-[#7e1ad2] py-6 sm:py-8 md:py-10 lg:py-12"
+      className="w-full bg-[#7e1ad2] py-3 sm:py-4 md:py-5 lg:py-6"
     >
-      <div className="w-full px-4 md:px-8 lg:px-12">
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12">
         <div
-          className={`grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 lg:gap-8 ${
+          className={`flex flex-row justify-between items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 ${
             isVisible ? "animate-fade-in-up" : "opacity-0"
           }`}
         >
           {socialPlatforms.map((platform, index) => (
             <div
               key={platform.name}
-              className="flex flex-col items-center justify-center text-center"
+              className="flex flex-col items-center justify-center text-center motion-lift"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Icono de red social */}
-              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 rounded-full bg-white/20 flex items-center justify-center mb-2 md:mb-3 lg:mb-4 p-1.5 sm:p-2">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-[4.75rem] lg:h-[4.75rem]  flex items-center justify-center mb-0.5 sm:mb-1 p-1.5 sm:p-2">
                 <Image
                   src={platform.image}
                   alt={`${platform.name} icon`}
@@ -78,14 +87,14 @@ export default function SocialStatsSection() {
               
               {/* Número */}
               <span
-                className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-black mb-1 md:mb-2"
+                className="text-white text-base sm:text-lg md:text-2xl lg:text-3xl font-black mb-0 leading-none"
                 style={{ fontFamily: "Colfax, sans-serif" }}
               >
                 100K
               </span>
               
               {/* Texto seguidores */}
-              <span className="text-white text-xs sm:text-sm md:text-base lg:text-lg font-semibold uppercase tracking-wide">
+              <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold uppercase tracking-tight leading-none" style={{ fontFamily: "Colfax, sans-serif" }}>
                 SEGUIDORES
               </span>
             </div>

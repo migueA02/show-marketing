@@ -17,10 +17,17 @@ import Image from "next/image";
  * - Animación smooth al entrar
  */
 export default function ContactSection() {
+  /**
+   * Control de visibilidad para activar animación en viewport.
+   */
   const [isVisible, setIsVisible] = useState(false);
+  /**
+   * Ref del section para IntersectionObserver.
+   */
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // Observa entrada al viewport y habilita la animación de fade/slide.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -49,7 +56,7 @@ export default function ContactSection() {
       className="w-full bg-[#67c7db] py-12 sm:py-16 md:py-20 lg:py-24"
     >
       <div
-        className={`w-full flex flex-col items-center px-4 md:px-8 lg:px-12 ${
+        className={`w-full max-w-[1200px] mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 ${
           isVisible ? "animate-fade-in-up" : "opacity-0"
         }`}
       >
@@ -61,27 +68,27 @@ export default function ContactSection() {
           CONTACTO
         </h2>
 
-        {/* Formulario */}
+        {/* Formulario compacto con campos básicos de contacto */}
         <form className="w-full max-w-sm md:max-w-md lg:max-w-lg space-y-4 md:space-y-5 lg:space-y-6 mb-8 sm:mb-10 md:mb-12 lg:mb-14">
           {/* Nombre */}
           <input
             type="text"
             placeholder="Nombre"
-            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]"
+            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]" style={{ fontFamily: "Helvetica LT P, sans-serif", fontWeight: 700 }}
           />
 
           {/* Apellido */}
           <input
             type="text"
             placeholder="Apellido"
-            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]"
+            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]" style={{ fontFamily: "Helvetica LT P, sans-serif", fontWeight: 700 }}
           />
 
           {/* Correo */}
           <input
             type="email"
             placeholder="Correo"
-            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]"
+            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]" style={{ fontFamily: "Helvetica LT P, sans-serif", fontWeight: 700 }}
           />
 
           {/* Teléfono con bandera de Costa Rica a la izquierda */}
@@ -98,7 +105,7 @@ export default function ContactSection() {
             <input
               type="tel"
               placeholder="Número de teléfono"
-              className="w-full pl-12 md:pl-14 lg:pl-16 pr-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]"
+              className="w-full pl-12 md:pl-14 lg:pl-16 pr-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]" style={{ fontFamily: "Helvetica LT P, sans-serif", fontWeight: 700 }}
             />
           </div>
 
@@ -106,22 +113,29 @@ export default function ContactSection() {
           <textarea
             placeholder="Información adicional:"
             rows={4}
-            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 resize-none text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]"
+            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 resize-none text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2]" style={{ fontFamily: "Helvetica LT P, sans-serif", fontWeight: 700 }}
           />
         </form>
 
-        {/* Botón enviar */}
+        {/* CTA de envío (lógica de backend pendiente) */}
         <button
           type="submit"
           onClick={(e) => {
             e.preventDefault();
             // Funcionalidad a implementar
           }}
-          className="bg-[#7e1ad2] text-white px-6 sm:px-8 md:px-10 lg:px-12 py-3 sm:py-4 md:py-5 lg:py-6 rounded-lg md:rounded-xl font-semibold md:text-lg lg:text-xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3"
+          className="bg-[#7e1ad2] text-white px-16 sm:px-20 md:px-24 lg:px-28 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-3 md:gap-4 pulse-cta"
+          style={{ fontFamily: "Colfax, sans-serif" }}
         >
-          <span>{"<<"}</span>
+          
           <span>ENVIAR</span>
-          <span>{"<<"}</span>
+          <Image
+            src="/img/merry/flecha.png"
+            alt="Flechas"
+            width={40}
+            height={40}
+            className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 object-contain"
+          />
         </button>
       </div>
     </section>

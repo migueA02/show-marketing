@@ -63,7 +63,7 @@ export default function MerryPage() {
       <Header />
       
       {/* Canvas centrado - contenido responsive mobile-first */}
-      <div className="max-w-[420px] md:max-w-[768px] lg:max-w-[1024px] mx-auto overflow-hidden bg-white">
+      <div className="w-full max-w-[420px] md:max-w-[768px] lg:max-w-none mx-auto overflow-hidden bg-white">
         <HeroSection />
         <SocialStatsSection />
         <AboutMerrySection />
