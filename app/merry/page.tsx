@@ -12,69 +12,108 @@ import EventSection from "@/components/merry/sections/EventSection";
 import ContactSection from "@/components/merry/sections/ContactSection";
 import FooterSection from "@/components/merry/sections/FooterSection";
 
-/**
- * Metadatos SEO para la página /merry
- * 
- * Configuración optimizada para SEO con:
- * - Título descriptivo
- * - Descripción relevante
- * - Open Graph para redes sociales
- * - Estructura semántica correcta
- */
 export const metadata: Metadata = {
-  title: "Doña Merry - Bienvenidos Chiquillos | ShowMarketing",
-  description: "Doña Merry - La gran ingeniera del hogar. Descubre aventuras, stickers, colaboraciones y más.",
+  title: "Doña Merry | La Gran Ingeniera del Hogar - ShowMarketing",
+  description: "Doña Merry te invita a descubrir entretenimiento, aventuras en redes sociales, stickers exclusivos, colaboraciones con marcas reconocidas y eventos inolvidables.",
+  keywords: [
+    "Doña Merry",
+    "Ingeniera del Hogar",
+    "Content Creator",
+    "ShowMarketing",
+    "Eventos",
+    "Stickers",
+    "Colaboraciones",
+    "Entretenimiento Costa Rica",
+  ],
   openGraph: {
-    title: "Doña Merry - Bienvenidos Chiquillos | ShowMarketing",
-    description: "Doña Merry - La gran ingeniera del hogar. Descubre aventuras, stickers, colaboraciones y más.",
     type: "website",
+    locale: "es_ES",
+    url: "https://showmarketing.cr/merry",
+    title: "Doña Merry - La Gran Ingeniera del Hogar",
+    description: "Entretenimiento, aventuras, stickers y colaboraciones con ShowMarketing.",
+    siteName: "ShowMarketing",
+  },
+  twitter: {
+    card: "summary_large_image",
+    creator: "@merry_oficial",
   },
 };
 
-/**
- * MerryPage Component
- * 
- * Página principal del landing ONE PAGE para /merry.
- * 
- * Estructura completa:
- * - Header: Navegación con logos
- * - HeroSection: Sección principal con texto y imagen
- * - SocialStatsSection: Estadísticas de redes sociales
- * - AboutMerrySection: Información sobre Doña Merry
- * - CollaborationsSection: Colaboraciones con marcas
- * - AdventuresSection: Aventuras en redes sociales
- * - StickersSection: Stickers descargables
- * - ChismesitosSection: Canal de chismesitos
- * - EventSection: Contratación de eventos
- * - ContactSection: Formulario de contacto
- * - FooterSection: Footer con redes sociales
- * 
- * Características:
- * - One page design
- * - Mobile-first responsive
- * - Canvas centrado con max-width fijo
- * - SEO optimizado
- * - Accesibilidad implementada
- */
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Doña Merry",
+  alternateName: ["La Gran Ingeniera del Hogar", "Merry Oficial"],
+  description: "Content creator, entertainer y personalidad de redes sociales costarricense. Conocida como La Gran Ingeniera del Hogar.",
+  image: "https://showmarketing.cr/img/merry/Merry-2.png",
+  url: "https://showmarketing.cr/merry",
+  nationality: "Costa Rica",
+  knowsLanguage: "es",
+  sameAs: [
+    "https://www.instagram.com/merry_oficial",
+    "https://www.tiktok.com/@merry_oficialcr",
+    "https://www.youtube.com/c/MisaelRam%C3%ADrezElSemental",
+    "https://www.facebook.com/FansdeMerry",
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+506-8305-4444",
+    contactType: "Customer Service",
+    availableLanguage: ["Spanish", "es"],
+    areaServed: "CR",
+  },
+  affiliation: {
+    "@type": "Organization",
+    name: "ShowMarketing",
+    url: "https://showmarketing.cr",
+  },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Inicio",
+      item: "https://showmarketing.cr",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Doña Merry",
+      item: "https://showmarketing.cr/merry",
+    },
+  ],
+};
+
 export default function MerryPage() {
   return (
-    <main className="w-full min-h-screen bg-gray-50">
-      {/* Header fuera del canvas para que ocupe todo el ancho */}
-      <Header />
-      
-      {/* Canvas centrado - contenido responsive mobile-first */}
-      <div className="max-w-[420px] md:max-w-[768px] lg:max-w-[1024px] mx-auto overflow-hidden bg-white">
-        <HeroSection />
-        <SocialStatsSection />
-        <AboutMerrySection />
-        <CollaborationsSection />
-        <AdventuresSection />
-        <StickersSection />
-        <ChismesitosSection />
-        <EventSection />
-        <ContactSection />
-        <FooterSection />
-      </div>
-    </main>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <main className="w-full">
+        <Header />
+        <div className="w-full">
+          <HeroSection />
+          <SocialStatsSection />
+          <AboutMerrySection />
+          <CollaborationsSection />
+          <AdventuresSection />
+          <StickersSection />
+          <ChismesitosSection />
+          <EventSection />
+          <ContactSection />
+          <FooterSection />
+        </div>
+      </main>
+    </>
   );
 }
