@@ -3,6 +3,7 @@
 
 import React, { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 /**
  * Header Component
@@ -167,14 +168,16 @@ export default function Header() {
       <div className="flex w-full items-center justify-between px-6 py-6 md:px-8 md:py-7">
         {/* Identidad de marca (logos). Se respeta tamaño; solo se aplica desplazamiento lateral. */}
         <div className="flex items-center gap-4 md:gap-5 ml-2 sm:ml-3">
-          <Image
-            src="/img/merry/show_Black.png"
-            alt="ShowMarketing - Agencia de eventos y entretenimiento"
-            width={1000}
-            height={1000}
-            priority
-            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain"
-          />
+          <Link href="/showmarketing" aria-label="Ir a ShowMarketing">
+            <Image
+              src="/img/merry/show_Black.png"
+              alt="ShowMarketing - Agencia de eventos y entretenimiento"
+              width={1000}
+              height={1000}
+              priority
+              className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain hover:opacity-80 transition-opacity"
+            />
+          </Link>
           <Image
             src="/img/merry/Merry.png"
             alt="Doña Merry - La Gran Ingeniera del Hogar"
