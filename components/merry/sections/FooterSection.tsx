@@ -48,11 +48,11 @@ export default function FooterSection() {
    * Configuración estática de iconos sociales; sustituir rutas si se actualiza branding.
    */
   const socialIcons = [
-    { name: "WhatsApp", image: "/img/merry/Whatsapp 2.png" },
-    { name: "Facebook", image: "/img/merry/Facebook 2.png" },
-    { name: "YouTube", image: "/img/merry/Youtube 2.png" },
-    { name: "Instagram", image: "/img/merry/Instagram 2.png" },
-    { name: "TikTok", image: "/img/merry/Tik tok 2.png" },
+    { name: "WhatsApp", image: "/img/merry/Whatsapp 2.png", url: "https://wa.me/50683054444" },
+    { name: "Facebook", image: "/img/merry/Facebook 2.png", url: "https://www.facebook.com/FansdeMerry/?locale=es_LA" },
+    { name: "YouTube", image: "/img/merry/Youtube 2.png", url: "https://www.youtube.com/c/MisaelRam%C3%ADrezElSemental" },
+    { name: "Instagram", image: "/img/merry/Instagram 2.png", url: "https://www.instagram.com/merry_oficial/" },
+    { name: "TikTok", image: "/img/merry/Tik tok 2.png", url: "https://www.tiktok.com/@merry_oficialcr" },
   ];
 
   return (
@@ -66,10 +66,14 @@ export default function FooterSection() {
         }`}
       >
         {socialIcons.map((social, index) => (
-          <div
+          <a
             key={social.name}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16  flex items-center justify-center transition-opacity cursor-pointer p-2 motion-lift hover:opacity-80"
             style={{ animationDelay: `${index * 50}ms` }}
+            aria-label={`Visitar ${social.name}`}
           >
             <Image
               src={social.image}
@@ -78,7 +82,7 @@ export default function FooterSection() {
               height={100}
               className="w-full h-full object-contain"
             />
-          </div>
+          </a>
         ))}
       </div>
     </footer>

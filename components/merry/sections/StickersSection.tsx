@@ -6,18 +6,47 @@ import Image from "next/image";
 /**
  * StickersSection Component
  *
- * Sección de stickers de Doña Merry.
- *
- * Objetivo:
- * - Mostrar una grilla visual fuerte de stickers SIN texto descriptivo.
- * - Stickers grandes, protagonistas, directamente sobre el fondo rosado.
- * - Botón de descarga con tipografía Acumin Pro Semibold.
+ * Objetivo: Exhibir stickers descargables de Doña Merry con call-to-action
+ * directo a App Store/Play Store/Web según dispositivo del usuario.
  *
  * Características visuales:
- * - Fondo rosado #ff29ab
- * - Stickers grandes, sin contenedores visibles
- * - Diseño mobile-first
- * - Animación smooth al entrar en viewport
+ * - Fondo: Rosado vibrante (#ff29ab) para alto contraste con stickers
+ * - Títulos: Colfax Black "STICKERS" (64px-144px) + Acumin Pro "DE DOÑA MERRY"
+ * - Grid: 2 columnas (mobile), responsive gap (16px-40px) con motion-lift
+ * - Stickers: Escalables (width: w-48-80), aspect 1:1, priority load para primeros 2
+ * - Botón: Morado con icono flecha, Acumin Pro Semibold, pulse-cta en hover
+ *
+ * Estructura:
+ * - Bloque tipográfico centrado (STICKERS + DE DOÑA MERRY)
+ * - Stickers array: {alt, image} para renderizado dinámico
+ *   → Cada sticker es Image optimizada con alt text descriptivo
+ *   → Primeros 2 stickers con priority=true para carga instantánea
+ * - Botón CTA: onClick → handleStickerDownload() → redirige a tienda
+ *
+ * Responsive:
+ * - Mobile: grid-cols-2, gap-4, py-10, w-48/h-48, px-4
+ * - Tablet (sm+): gap-6, py-12, w-56/h-56, px-4
+ * - Desktop (md+): gap-8, py-14, w-72/h-72, px-8
+ * - Large (lg+): gap-10, py-16, w-80/h-80, px-12
+ *
+ * Lógica de descarga:
+ * - Detecta userAgent para identificar dispositivo
+ * - iOS: Redirecciona a Apple App Store (Stickerly app)
+ * - Android: Redirecciona a Google Play Store (Stickerly app)
+ * - Desktop/Otro: Redirecciona a sticker.ly web
+ *
+ * Accesibilidad:
+ * - Alt text descriptivo en cada sticker
+ * - Alt text en icono flecha
+ * - ARIA-label implícito en botón CTA
+ * - Focus ring 2px en botón
+ * - Semántica h2 para "STICKERS"
+ *
+ * Notas de optimización:
+ * - Images con width/height precisos evitan layout shift
+ * - Priority load para stickers 0-1 (above-the-fold)
+ * - Lazy load para stickers 2-3 (below-the-fold)
+ * - window.open("_blank") permite abrir tienda sin abandonar página
  */
 export default function StickersSection() {
   /**
@@ -57,11 +86,31 @@ export default function StickersSection() {
    *   NO se renderiza visualmente.
    */
   const stickers = [
-    { alt: "Sticker ¡Que chicha!", image: "/img/merry/STICKER-2---MERRY.png" },
-    { alt: "Sticker Muack", image: "/img/merry/STICKER-9---MERRY.png" },
-    { alt: "Sticker Bendiciones", image: "/img/merry/STICKER-11---MERRY.png" },
-    { alt: "Sticker Yo no fui", image: "/img/merry/STICKER-8---MERRY.png" },
+    { alt: "Sticker de Doña Merry - ¡Que chicha! - Descargable para WhatsApp", image: "/img/merry/STICKER-2---MERRY.png" },
+    { alt: "Sticker de Doña Merry - Muack - Descargable para WhatsApp", image: "/img/merry/STICKER-9---MERRY.png" },
+    { alt: "Sticker de Doña Merry - Bendiciones - Descargable para WhatsApp", image: "/img/merry/STICKER-11---MERRY.png" },
+    { alt: "Sticker de Doña Merry - Yo no fui - Descargable para WhatsApp", image: "/img/merry/STICKER-8---MERRY.png" },
   ];
+
+  /**
+   * Maneja la descarga de stickers:
+   * - Redirige directamente a la tienda del dispositivo (App Store/Play Store/Web)
+   */
+  const handleStickerDownload = () => {
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    const isAndroid = /android/i.test(userAgent);
+
+    // Redirigir directamente a la tienda correspondiente
+    if (isIOS) {
+      window.open("https://apps.apple.com/app/stickerly/id1458326933", "_blank");
+    } else if (isAndroid) {
+      window.open("https://play.google.com/store/apps/details?id=com.stickerly.app", "_blank");
+    } else {
+      // Desktop o navegador desconocido
+      window.open("https://sticker.ly/", "_blank");
+    }
+  };
 
   return (
     <section
@@ -110,10 +159,7 @@ export default function StickersSection() {
 
         {/* Botón de descarga */}
         <button
-          onClick={() => {
-            // URL final a definir por el proyecto
-            window.open("#", "_blank");
-          }}
+          onClick={handleStickerDownload}
           className={[
             "bg-[#7e1ad2] text-white",
             "px-10 sm:px-14 md:px-18 lg:px-22",

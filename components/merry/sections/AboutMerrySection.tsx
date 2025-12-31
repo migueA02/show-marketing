@@ -5,15 +5,33 @@ import Image from "next/image";
 
 /**
  * AboutMerrySection Component
- * 
- * Sección "Sobre Doña Merry" con avatar circular y botón.
- * 
- * Características:
- * - Fondo rosado #ff29ab
- * - Avatar circular con borde blanco
- * - Título y subtítulo en blanco
- * - Botón morado con texto blanco
- * - Animación smooth al entrar
+ *
+ * Objetivo: Presentar la identidad y propuesta de valor de Doña Merry con
+ * visualización inmediata del avatar, nombre profesional y CTA hacia biografía.
+ *
+ * Características visuales:
+ * - Fondo: Gradiente rosado vibrante (#ff29ab) para alto contraste y atención
+ * - Avatar: Circular, escalable (clamp 10rem-18rem) con contenedor overflow-hidden
+ * - Tipografía: Colfax Black para títulos, Acumin Pro Semibold para CTA
+ * - Componente motion-lift para animación visual discreta en fade-in-up
+ *
+ * Estructura:
+ * - Contenedor principal con max-width respecto a ancho del viewport
+ * - Avatar circular centrado con Image optimizada (250x250px)
+ * - Bloque tipográfico (DOÑA MERRY + LA GRAN INGENIERA DEL HOGAR) con tracking dinámico
+ * - Botón CTA con icono de flecha, pulse-cta para estado hover
+ *
+ * Responsive:
+ * - Mobile: Stacking vertical con padding px-4
+ * - Tablet (sm+): Aumenta espaciado y tamaño de fuente progresivamente
+ * - Desktop (lg+): Títulos xl (80px-90px), espaciado óptimo
+ *
+ * Accesibilidad:
+ * - Alt text descriptivo en avatar ("Doña Merry - Avatar")
+ * - Alt text en icono de flecha
+ * - Semántica h2 para subtítulo de sección
+ * - Focus ring en botón (2px #7e1ad2)
+ * - Apertura de links en nueva ventana con window.open
  */
 export default function AboutMerrySection() {
   /**
@@ -62,10 +80,11 @@ export default function AboutMerrySection() {
         <div className="w-[clamp(10rem,24vw,18rem)] h-[clamp(10rem,24vw,18rem)] rounded-full mb-6 sm:mb-8 md:mb-10 lg:mb-12 overflow-hidden relative">
           <Image
             src="/img/merry/Merry-2.png"
-            alt="Doña Merry - Avatar"
+            alt="Doña Merry - La Gran Ingeniera del Hogar - Foto de perfil oficial"
             width={250}
             height={250}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
         </div>
 

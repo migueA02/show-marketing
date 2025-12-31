@@ -31,7 +31,7 @@ export default function Header() {
   /**
    * Identificador estable para relacionar el botón hamburguesa con el panel (aria-controls).
    */
-  const menuId = useId();
+  const menuId = "mobile-menu-panel";
 
   /**
    * Estado del panel desplegable en mobile/tablet.
@@ -66,10 +66,10 @@ export default function Header() {
 
   /**
    * Sincroniza el estado del menú con el breakpoint:
-   * - Al pasar a desktop (lg+), se fuerza el cierre del panel para evitar estados inconsistentes.
+   * - Al pasar a desktop (xl+), se fuerza el cierre del panel para evitar estados inconsistentes.
    */
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
+    const mq = window.matchMedia("(min-width: 1280px)");
     const onChange = () => {
       if (mq.matches) setIsOpen(false);
     };
@@ -169,7 +169,7 @@ export default function Header() {
         <div className="flex items-center gap-4 md:gap-5 ml-2 sm:ml-3">
           <Image
             src="/img/merry/show_Black.png"
-            alt="Show Marketing logo"
+            alt="ShowMarketing - Agencia de eventos y entretenimiento"
             width={1000}
             height={1000}
             priority
@@ -177,7 +177,7 @@ export default function Header() {
           />
           <Image
             src="/img/merry/Merry.png"
-            alt="Doña Merry logo"
+            alt="Doña Merry - La Gran Ingeniera del Hogar"
             width={1000}
             height={1000}
             priority
@@ -186,7 +186,7 @@ export default function Header() {
         </div>
 
         {/* Navegación desktop (sin menú hamburguesa). */}
-        <nav aria-label="Navegación principal" className="hidden lg:flex items-center gap-4 xl:gap-6">
+        <nav aria-label="Navegación principal" className="hidden xl:flex items-center gap-4 xl:gap-6">
           {NAV_ITEMS.map((item) => {
             const href = item.sec === "inicio" ? "/merry" : `/merry?sec=${item.sec}`;
 
@@ -195,6 +195,7 @@ export default function Header() {
                 key={item.sec}
                 href={href}
                 onClick={(e) => scrollToSection(item.targetId, item.sec, e)}
+                aria-label={`Navegar a ${item.label}`}
                 className={[
                   "font-black uppercase tracking-tight",
                   "text-[#171717] hover:text-[#ff29ab] transition-colors",
@@ -216,7 +217,7 @@ export default function Header() {
           aria-expanded={isOpen}
           aria-controls={menuId}
           onClick={() => setIsOpen((v) => !v)}
-          className="lg:hidden bg-[#ff29ab] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff29ab] focus:ring-offset-2"
+          className="xl:hidden bg-[#ff29ab] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff29ab] focus:ring-offset-2"
         >
           <div className="flex flex-col items-center justify-center gap-[6px]" aria-hidden="true">
             <span className="block h-[3px] w-7 rounded bg-white" />
@@ -227,7 +228,7 @@ export default function Header() {
       </div>
 
       {/* Menú mobile/tablet: overlay + panel desplegable. */}
-      <div className="lg:hidden">
+      <div className="xl:hidden">
         <div
           className={[
             "fixed inset-0 z-40",

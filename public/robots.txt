@@ -1,0 +1,42 @@
+# ShowMarketing - robots.txt para Doña Merry Landing
+# Última actualización: 2025-12-30
+
+# Rastreo general permitido
+User-agent: *
+Allow: /
+Crawl-delay: 0
+
+# Permitir assets públicos útiles
+Allow: /fonts/
+Allow: /img/
+Allow: /favicon.ico
+
+# Bloquear rutas técnicas / build
+Disallow: /_next/
+Disallow: /.next/
+Disallow: /node_modules/
+Disallow: /api/
+
+# Bloquear JSON si realmente no quieres que se rastreen (opcional)
+Disallow: /*.json$
+
+# Googlebot específico (optimización)
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bots de redes sociales (para previews)
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# Sitemap principal
+Sitemap: https://showmarketing.cr/sitemap.xml

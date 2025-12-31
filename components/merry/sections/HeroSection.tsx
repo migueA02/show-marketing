@@ -96,7 +96,7 @@ export default function HeroSection() {
       <div className="relative z-10 w-full flex justify-center animate-fade-in-up" style={{ animationDelay: "150ms" }}>
         <Image
           src="/img/merry/Merry-landing.png"
-          alt="Doña Merry - Imagen principal del hero"
+          alt="Doña Merry - La Gran Ingeniera del Hogar - Content Creator y Entertainer"
           width={800}
           height={590}
           className="w-full h-auto max-w-3xl md:max-w-4xl lg:max-w-5xl object-contain"

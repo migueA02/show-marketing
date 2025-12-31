@@ -6,16 +6,7 @@ import Image from "next/image";
 /**
  * ChismesitosSection Component
  *
- * Ajustes solicitados:
- * - Título "CHISMESITOS DE MERRY" más grande y más ancho (ocupa más línea).
- * - Bloque tipográfico más compacto (menos separación entre líneas).
- * - Imagen más pegada al botón (eliminar margen superior y compactar tarjeta).
- *
- * Reglas:
- * - Se mantiene mobile-first.
- * - No se introducen librerías externas.
- * - Se respetan colores existentes del diseño.
- */
+ * Objetivo: Promover la suscripción al canal de Instagram de Do\u00f1a Merry mediante\n * visualizaci\u00f3n destacada de t\u00edtulo tipogr\u00e1fico + imagen atractiva + CTA directo.\n *\n * Caracter\u00edsticas visuales:\n * - Fondo: Amarillo vibrante (#ffd44a) para alto contraste y visibilidad\n * - T\u00edtulos: Acumin Pro + Colfax Black en morado/rosado, tama\u00f1os din\u00e1micos\n *   \u2192 \"CHISMESITOS DE\" (30px-50px) con tracking positivo (0.12em-0.04em)\n *   \u2192 \"MERRY\" (88px-128px) con Colfax negrita, tracking negativo (-0.03em)\n * - Imagen: aspect-3/4 (460x640px), rounded-t-xl, overflow-hidden\n * - Bot\u00f3n: Morado con padding escalable (py-2-3), icono Instagram + flecha\n * - Tarjeta unificada: Imagen + bot\u00f3n sin separaci\u00f3n (mb-0)\n *\n * Estructura:\n * - Bloque tipogr\u00e1fico centrado con max-width responsiva (360px-700px)\n * - Negativo margin-top (-mt-16 a -mt-25) para solapamiento visual con t\u00edtulo\n * - Tarjeta contenedora con motion-lift (animaci\u00f3n hover sutil)\n * - Imagen preload: priority=true para carga r\u00e1pida\n * - Bot\u00f3n CTA: window.open(Instagram channel, \"_blank\"), pulse-cta en hover\n *\n * Responsive:\n * - Mobile: max-w-[320px], tracking [0.12em], texto 30px, py-12\n * - Tablet (sm+): max-w-[360px], tracking [0.09em], texto 36px, py-16\n * - Desktop (md+): max-w-[420px], tracking [0.06em], texto 42px-110px, py-20\n * - Large (lg+): max-w-[460px], tracking [0.04em], texto 50px-128px, py-24\n *\n * Accesibilidad:\n * - Alt text en imagen: \"Chismesitos de Do\u00f1a Merry\"\n * - Alt text en icono Instagram y flecha\n * - Sem\u00e1ntica h2 para \"MERRY\" (t\u00edtulo principal)\n * - Button type=\"button\" con onClick y rel=\"noopener noreferrer\"\n * - Focus ring 2px en bot\u00f3n (hover:opacity-90)\n *\n * Notas de optimizaci\u00f3n:\n * - Imagen priority=true para carga prioritaria (hero del viewport)\n * - Tracking din\u00e1mico reduce complejidad visual en mobile\n * - Solapamiento tipogr\u00e1fico crea din\u00e1mica visual sin complexity CSS\n */
 export default function ChismesitosSection() {
   /**
    * Control de animación al entrar al viewport.
@@ -86,16 +77,16 @@ export default function ChismesitosSection() {
         </div>
 
         {/* Tarjeta unificada: imagen + botón sin separación visible */}
-        <div className="-mt-12 sm:-mt-10 md:-mt-14 lg:-mt-18 w-full max-w-[320px] sm:max-w-[360px] md:max-w-[420px] lg:max-w-[460px] relative z-10 motion-lift">
+        <div className="-mt-16 sm:-mt-14 md:-mt-20 lg:-mt-25 w-full max-w-[320px] sm:max-w-[360px] md:max-w-[420px] lg:max-w-[460px] relative z-10 motion-lift">
           {/* Imagen */}
-          <div className="w-full aspect-3/4 relative overflow-hidden rounded-t-xl -mb-4 lg:-mb-6">
+          <div className="w-full aspect-3/4 relative overflow-hidden rounded-t-xl mb-0 sm:mb-0 lg:mb-0">
 
             <Image
               src="/img/merry/Chismesitos.png"
-              alt="Chismesitos de Doña Merry"
+              alt="Chismesitos de Doña Merry - Canal exclusivo de Instagram con contenido de entretenimiento"
               width={460}
               height={640}
-              className="w-full h-full object-cover"
+              className="w-full h-auto object-cover"
               priority
             />
           </div>
@@ -105,7 +96,7 @@ export default function ChismesitosSection() {
             type="button"
             onClick={() => {
               // URL del canal a definir
-              window.open("#", "_blank");
+              window.open("https://www.instagram.com/channel/Abal9hIfKAWne5zY/", "_blank");
             }}
             className={[
               "w-full",

@@ -5,15 +5,42 @@ import Image from "next/image";
 
 /**
  * AdventuresSection Component
- * 
- * Sección de aventuras en redes sociales con grid de posts.
- * 
- * Características:
- * - Fondo cyan #67c7db
- * - Título y subtítulo en morado #7e1ad2
- * - Botón morado con handle de Instagram
- * - Grid de 2 columnas con 6 placeholders
- * - Animación smooth al entrar
+ *
+ * Objetivo: Exhibir contenido visual de aventuras de Doña Merry en redes sociales
+ * mediante grid responsivo de posts con redirección a perfil de Instagram.
+ *
+ * Características visuales:
+ * - Fondo: Cyan corporativo (#67c7db) para continuidad de marca
+ * - Títulos: Colfax Black "AVENTURAS" + Colfax Semibold "DE DOÑA MERRY" en morado
+ *   → Tracking negativo (-0.05em a -0.065em) para compresión visual
+ *   → Leading-tight para aproximación de líneas
+ * - Subtítulo: Acumin Pro Semibold "EN REDES SOCIALES" en morado, tracking-wide
+ * - Grid: 2 columnas mobile, 3 columnas desktop con aspect-square y gap responsivo
+ * - Botón: Morado con icono flecha, pulse-cta, redirección Instagram (@merryoficial)
+ *
+ * Estructura:
+ * - Bloque tipográfico con max-width controlada (650px-1050px según viewport)
+ * - 3 líneas de título: "AVENTURAS" + "DE DOÑA MERRY" + "EN REDES SOCIALES"
+ * - CTA button con onClick → window.open("https://www.instagram.com/merry_oficial/", "_blank")
+ * - Grid de 6 imágenes (Aventuras_1 a Aventuras_6) con Image optimizada
+ * - Cada grid item: aspect-square, rounded-lg/xl, overflow-hidden
+ *
+ * Responsive:
+ * - Mobile (base): grid-cols-2, gap-2, py-12, px-4
+ * - Tablet (md+): grid-cols-3, gap-4, py-20, px-8
+ * - Desktop (lg+): gap-5, py-24, px-12, max-w-[900px]
+ *
+ * Accesibilidad:
+ * - Alt text descriptivo en cada imagen: "Aventura de Doña Merry {índice+1}"
+ * - Alt text en icono flecha
+ * - Semántica h2 para título principal
+ * - Focus ring en botón (2px #7e1ad2)
+ * - Apertura de links en nueva ventana con rel implícito
+ *
+ * Notas de optimización:
+ * - Imágenes sin loading="lazy" (prioridad normal para grid)
+ * - Image width/height: 400x400px para aspect-square
+ * - Button CSS: display flex para alineación icon-text
  */
 export default function AdventuresSection() {
   /**
@@ -83,7 +110,7 @@ export default function AdventuresSection() {
         <button
           onClick={() => {
             // URL a cambiar por el usuario (Instagram de Doña Merry)
-            window.open("#", "_blank");
+            window.open("https://www.instagram.com/merry_oficial/", "_blank");
           }}
           className="bg-[#7e1ad2] text-white px-10 sm:px-14 md:px-18 lg:px-22 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold md:text-lg lg:text-xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3 mb-8 sm:mb-10 md:mb-12 lg:mb-14 pulse-cta"
         >
@@ -113,10 +140,11 @@ export default function AdventuresSection() {
             >
               <Image
                 src={imageSrc}
-                alt={`Aventura de Doña Merry ${index + 1}`}
+                alt={`Doña Merry aventuras en redes sociales - Foto ${index + 1} de eventos y entretenimiento`}
                 width={400}
                 height={400}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </div>
           ))}

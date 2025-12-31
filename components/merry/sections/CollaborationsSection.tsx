@@ -5,25 +5,58 @@ import Image from "next/image";
 
 /**
  * CollaborationsSection Component
- * 
- * Sección de colaboraciones con carrusel de videos.
- * 
-  const [currentSlide, setCurrentSlide] = useState(0);
-  // Slides base (se duplican para bucle infinito)
-  const baseSlides = [
-    { id: 1, url: "#" },
-    { id: 2, url: "#" },
-    { id: 3, url: "#" },
-  ];
-  // Triple lista para lograr continuidad en ambos extremos
-  const loopSlides = [...baseSlides, ...baseSlides, ...baseSlides];
-  const loopSegmentLength = baseSlides.length; // 3
- * Características:
- * - Fondo morado #7e1ad2
- * - Título y subtítulo en blanco
- * - Carrusel de videos con placeholders
- * - Indicadores de paginación (dots)
- * - Animación smooth al entrar
+ *
+ * Objetivo: Exhibir carrusel infinito de colaboraciones/videos de Doña Merry
+ * con controles de navegación (dots), soporte touch/mouse drag, y loop seamless.
+ *
+ * Características visuales:
+ * - Fondo: Morado corporativo (#7e1ad2) para continuidad de marca
+ * - Títulos: Colfax Black "DOÑA MERRY" (48px-80px) + Acumin Pro subtítulo
+ * - Carrusel: Videos en contenedor horizontal con snap-x snap-mandatory
+ * - Item size: 85% mobile (w-[85%]), 80% tablet (w-[80%]), 70%-60% desktop
+ * - Aspect ratio: aspect-video (16:9) para videos/placeholders
+ * - Indicadores: 3 dots blancos, clickeables, dimmed cuando inactivo
+ *
+ * Estructura del carrusel:
+ * - baseSlides: Array de 3 slides base con {id, url}
+ * - loopSlides: Triplicación [base, base, base] para loop infinito seamless
+ * - Refs: carouselRef (contenedor scroll), hasDraggedRef (flag drag detection)
+ * - Estados: currentSlide (0-2), isDragging, startX, scrollLeft
+ *
+ * Interacciones:
+ * - Mouse: handleMouseDown/handleMouseMove/handleMouseUp para drag
+ * - Touch: handleTouchStart/handleTouchMove/handleTouchEnd sin preventDefault
+ * - CSS touchAction: "pan-x" para permitir scroll horizontal natural
+ * - Drag detection: 6px threshold para bloquear clicks tras arrastre
+ * - Click delay: setTimeout 80ms antes de habilitar clicks nuevamente
+ *
+ * Lógica del loop infinito:
+ * - handleScroll monitorea scroll position relativo a los 3 bloques
+ * - Si scroll < 10% del bloque central: reposiciona a bloque central sin transición
+ * - Si scroll > 290% del bloque central: reposiciona igual
+ * - Actualización de currentSlide: Cálculo de slide relativo al tercio central
+ * - goToSlide: Navega a slide especific con smooth scroll behavior
+ *
+ * Responsive:
+ * - Mobile: item width 85%, gap-3, py-12, px-4
+ * - Tablet (sm+): item width 80%, gap-4, py-16, px-4
+ * - Desktop (md+): item width 70%, gap-6, py-20, px-8
+ * - Large (lg+): item width 60%, gap-8, py-24, px-12, pb-0 (mobile pb-4)
+ *
+ * Accesibilidad:
+ * - Alt text en botones de navegación: "Ir a slide {index+1}"
+ * - aria-label en indicators (ARIA navigation)
+ * - Cursor grab/grabbing para indicar draggability
+ * - Focus ring 2px en buttons
+ * - Semántica h2 para título principal
+ * - Apertura de links en nueva ventana (window.open "_blank")
+ *
+ * Notas de optimización:
+ * - scrollbarWidth: none y msOverflowStyle: none ocultan scrollbar
+ * - WebkitOverflowScrolling: touch para inercial smooth en iOS
+ * - Images (Play button) con width/height precisos
+ * - motion-lift en items para efecto visual hover
+ * - ripple-dot en indicators para feedback visual
  */
 export default function CollaborationsSection() {
   /**
@@ -142,8 +175,7 @@ export default function CollaborationsSection() {
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !carouselRef.current) return;
-    // Previene el scroll vertical del body mientras se arrastra en eje X.
-    e.preventDefault();
+    // CSS touch-action: none se encarga de prevenir el scroll vertical.
     const x = e.touches[0].pageX - carouselRef.current.offsetLeft;
     const walk = (x - startX) * 2;
     if (Math.abs(x - startX) > 6) {
@@ -242,6 +274,7 @@ export default function CollaborationsSection() {
               msOverflowStyle: "none",
               scrollBehavior: "smooth",
               WebkitOverflowScrolling: "touch",
+              touchAction: "pan-x",
             }}
           >
             {loopSlides.map((video, idx) => (

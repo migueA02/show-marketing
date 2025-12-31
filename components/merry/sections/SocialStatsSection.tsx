@@ -5,15 +5,35 @@ import Image from "next/image";
 
 /**
  * SocialStatsSection Component
- * 
- * Sección de estadísticas de redes sociales.
- * Muestra 4 métricas horizontales con iconos de redes sociales.
- * 
- * Características:
- * - Fondo morado #7e1ad2
- * - 4 bloques horizontales con iconos, número y texto
- * - Animación smooth al entrar
- * - Mobile-first, compacto
+ *
+ * Objetivo: Visualizar métricas de presencia social de Doña Merry (followers)
+ * en formato compacto y horizontalmente distribuido para máxima legibilidad.
+ *
+ * Características visuales:
+ * - Fondo: Morado corporativo (#7e1ad2) para continuidad de marca
+ * - Distribución: 4 columnas horizontal (flex justify-between) con iconos cuadrados
+ * - Iconos: 48px-76px según breakpoint (clamp 12rem-4.75rem) con Image optimizada
+ * - Tipografía: Colfax Black para números (100K), Colfax SB para "SEGUIDORES"
+ * - Espaciado mínimo: py-3 para sección compacta
+ *
+ * Estructura:
+ * - Contenedor sección con id="social-stats" para deep-linking (?sec=redes-sociales)
+ * - Array socialPlatforms: {name, icon, image} para fácil actualización de métricas
+ * - 4 bloques verticales con motion-lift y animationDelay escalonado (100ms)
+ * - Cada bloque contiene: icono + número + etiqueta ("SEGUIDORES")
+ *
+ * Responsive:
+ * - Mobile: gap-3, iconos w-12/h-12, texto xs
+ * - Tablet (md+): gap-6, iconos w-16/h-16, texto md
+ * - Desktop (lg+): gap-8, iconos w-76px/h-76px, texto 3xl
+ *
+ * Accesibilidad:
+ * - Alt text en cada icono ({platform.name} icon)
+ * - ARIA-label implícito en números (100K SEGUIDORES)
+ * - Focus ring 2px #7e1ad2 en bloque padre
+ * - Estructura semántica con div para cada métrica
+ *
+ * Animación: fade-in-up principal + motion-lift escalonado (0ms-300ms) para efecto visual
  */
 export default function SocialStatsSection() {
   /**
