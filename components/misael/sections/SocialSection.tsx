@@ -32,11 +32,7 @@ export default function SocialSection() {
   ];
 
   return (
-    <section
-      id="adventures"
-      ref={sectionRef}
-      className="w-full bg-black py-4"
-    >
+    <section ref={sectionRef} className="w-full bg-black py-4">
       <div
         className={`max-w-[1400px] mx-auto flex flex-col gap-1 items-center px-4 md:px-8 lg:px-12  py-10 ${
           isVisible ? "animate-fade-in-up" : "opacity-0"
@@ -64,9 +60,8 @@ export default function SocialSection() {
             </div>
           ))}
         </div>
-        
+        <div id="stickers"></div>
       </div>
-      
     </section>
   );
 }

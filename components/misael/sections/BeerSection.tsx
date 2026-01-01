@@ -43,6 +43,7 @@ const BeerSection = () => {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share "
         className="w-full max-w-300"
       ></iframe>
+      <div id="collaborations"></div>
     </div>
   );
 };

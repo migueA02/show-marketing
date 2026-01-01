@@ -101,7 +101,7 @@ export default function MerryPage() {
       />
       <main className="w-full">
         <Header />
-        <div className="w-full">
+        <div className="w-full mt-[112px] md:mt-[152px]">
           <HeroSection />
           <SocialStatsSection />
           <AboutMerrySection />

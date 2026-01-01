@@ -15,22 +15,23 @@ import Link from "next/link";
  * - Deep-linking con query string (?sec=)
  * - Menú mobile accesible con overlay
  */
-export default function Header() {
+export default function Navbar() {
   const menuId = "mobile-menu-panel";
   const [isOpen, setIsOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const NAV_ITEMS = [
+   const NAV_ITEMS = [
     { label: "Inicio", targetId: "hero", sec: "inicio" },
-    { label: "Redes", targetId: "social-stats", sec: "redes-sociales" },
-    { label: "Doña Merry", targetId: "about", sec: "dona-merry" },
+    { label: "Redes", targetId: "social-stats", sec: "" },
+    { label: "Cerveza Semental", targetId: "beer", sec: "cerveza-semental" },
     { label: "Colaboraciones", targetId: "collaborations", sec: "colaboraciones" },
-    { label: "Aventuras", targetId: "adventures", sec: "aventuras" },
+    { label: "Banda MR", targetId: "band", sec: "banda-mr" },
+    { label: "Redes Sociales", targetId: "social", sec: "redes-sociales" },
     { label: "Stickers", targetId: "stickers", sec: "stickers" },
-    { label: "Chismesitos", targetId: "chismesitos", sec: "chismesitos" },
-    { label: "Evento", targetId: "event", sec: "evento" },
+    { label: "Canal", targetId: "channel", sec: "canal" },
     { label: "Contacto", targetId: "contact", sec: "contacto" },
   ] as const;
+
 
   /**
    * Cierra el menú al pasar a desktop
@@ -87,20 +88,20 @@ export default function Header() {
       .getElementById(targetId)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    const url = sec === "inicio" ? "/merry" : `/merry?sec=${encodeURIComponent(sec)}`;
+    const url = sec === "inicio" ? "/misael" : `/misael?sec=${encodeURIComponent(sec)}`;
     window.history.replaceState(null, "", url);
 
     menuButtonRef.current?.focus();
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-white">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-black">
       <div className="flex w-full items-center justify-between px-6 py-6 md:px-8 md:py-7">
         {/* Logos */}
         <div className="flex items-center gap-4 md:gap-5 ml-2 sm:ml-3">
           <Link href="/showmarketing" aria-label="Ir a ShowMarketing">
             <Image
-              src="/img/merry/show_Black.png"
+              src="/img/misael/show_white.png"
               alt="ShowMarketing"
               width={1000}
               height={1000}
@@ -109,7 +110,7 @@ export default function Header() {
             />
           </Link>
           <Image
-            src="/img/merry/Merry.png"
+            src="/img/misael/logo.png"
             alt="Doña Merry"
             width={1000}
             height={1000}
@@ -125,7 +126,7 @@ export default function Header() {
               key={item.sec}
               href={item.sec === "inicio" ? "/merry" : `/merry?sec=${item.sec}`}
               onClick={(e) => scrollToSection(item.targetId, item.sec, e)}
-              className="font-black uppercase tracking-tight text-[#171717] hover:text-[#ff29ab] transition-all text-sm xl:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff29ab] focus-visible:ring-offset-2 hover:scale-105 duration-150"
+              className="font-black uppercase tracking-tight text-white hover:text-[#854319] transition-all text-sm xl:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#854319] focus-visible:ring-offset-2 hover:scale-105 duration-150"
             >
               {item.label}
             </a>
@@ -138,7 +139,7 @@ export default function Header() {
           aria-expanded={isOpen}
           aria-controls={menuId}
           onClick={() => setIsOpen((v) => !v)}
-          className="xl:hidden bg-[#ff29ab] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff29ab] focus:ring-offset-2"
+          className="xl:hidden bg-[#854319] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#854319] focus:ring-offset-2"
         >
           <span className="sr-only">Abrir menú</span>
           <div className="flex flex-col gap-[6px]">
@@ -175,14 +176,14 @@ export default function Header() {
                   <a
                     href={item.sec === "inicio" ? "/merry" : `/merry?sec=${item.sec}`}
                     onClick={(e) => scrollToSection(item.targetId, item.sec, e)}
-                    className="block w-full px-5 py-3 font-black uppercase tracking-tight text-[#171717] hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff29ab] focus-visible:ring-inset"
+                    className="block w-full px-5 py-3 font-black uppercase tracking-tight text-[#171717] hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#854319] focus-visible:ring-inset"
                   >
                     {item.label}
                   </a>
                 </li>
               ))}
             </ul>
-            <div className="h-1 bg-[#ff29ab]" />
+            <div className="h-1 bg-black" />
           </div>
         </div>
       </div>

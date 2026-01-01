@@ -31,7 +31,6 @@ export default function StickersSection() {
 
   return (
     <section
-      id="stickers"
       ref={sectionRef}
       className={`w-full bg-[#854319]  py-10 flex justify-center ${
         isVisible ? "animate-fade-in-up" : "opacity-0"
@@ -49,25 +48,25 @@ export default function StickersSection() {
         </div>
 
         {/* Grid de stickers */}
-      <div className="w-full grid grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 mb-4">
-  {stickers.map((sticker, index) => (
-    <div
-      key={index}
-      className="flex items-center justify-center w-full h-full"
-    >
-      <Image
-        src={sticker.image}
-        alt={sticker.alt}
-        width={500} 
-        height={500} 
-        className="w-96 h-96  object-cover rounded-xl"
-        priority={index < 2}
-      />
-    </div>
-  ))}
-</div>
+        <div className="w-full grid grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 mb-4">
+          {stickers.map((sticker, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-center w-full h-full"
+            >
+              <Image
+                src={sticker.image}
+                alt={sticker.alt}
+                width={500}
+                height={500}
+                className="w-96 h-96  object-cover rounded-xl"
+                priority={index < 2}
+              />
+            </div>
+          ))}
+        </div>
 
-
+        <div id="channel"></div>
         {/* Botón de descarga */}
         <button
           onClick={() => window.open("#", "_blank")}

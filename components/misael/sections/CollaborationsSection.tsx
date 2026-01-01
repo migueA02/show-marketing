@@ -35,7 +35,10 @@ export default function CollaborationsSection() {
     const slides = carouselRef.current.children;
     if (slides[index]) {
       const slide = slides[index] as HTMLElement;
-      carouselRef.current.scrollTo({ left: slide.offsetLeft, behavior: "smooth" });
+      carouselRef.current.scrollTo({
+        left: slide.offsetLeft,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -55,7 +58,6 @@ export default function CollaborationsSection() {
 
   return (
     <section
-      id="collaborations"
       ref={sectionRef}
       className="w-full bg-[#854319]  py-10 flex justify-center items-center"
     >
@@ -97,13 +99,14 @@ export default function CollaborationsSection() {
               </div>
             ))}
           </div>
+          <div id="band"></div>
           <style jsx>{`
             .scrollbar-hide::-webkit-scrollbar {
               display: none;
             }
           `}</style>
         </div>
-
+        
         {/* Paginación */}
         <div className="flex gap-2 md:gap-3 justify-center">
           {videos.map((_, index) => (

@@ -22,9 +22,10 @@ export default function SallionLifeSection() {
 
   return (
     <section
-      id="chismesitos"
       ref={sectionRef}
-      className={`w-full bg-black py-10 flex justify-center ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}
+      className={`w-full bg-black py-10 flex justify-center ${
+        isVisible ? "animate-fade-in-up" : "opacity-0"
+      }`}
     >
       <div className="w-full max-w-[1400px] px-4 md:px-8 lg:px-12 flex flex-col items-center gap-8">
         <div className="w-full flex flex-col gap-2 text-center">

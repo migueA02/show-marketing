@@ -22,6 +22,7 @@ const HeroSection = () => {
 
   return (
     <section
+      id="hero"
       ref={sectionRef}
       className={`relative w-full h-screen overflow-hidden bg-black ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}
     >
