@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 
 /**
  * ContactSection Component
@@ -42,21 +43,14 @@ export default function ContactSection() {
   }, []);
 
   return (
-    <section
-      id="contact"
-      ref={sectionRef}
-      className="w-full bg-[#854319] py-12 sm:py-16 md:py-20 lg:py-24"
-    >
+    <section id="contact" ref={sectionRef} className="w-full bg-[#854319] py-4">
       <div
         className={`w-full flex flex-col items-center px-4 md:px-8 lg:px-12 gap-2 ${
           isVisible ? "animate-fade-in-up" : "opacity-0"
         }`}
       >
         {/* Título */}
-        <h2
-          className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase  text-center"
-          style={{ fontFamily: "Colfax, sans-serif" }}
-        >
+        <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase  text-center font-acumin">
           CONTACTO
         </h2>
 
@@ -111,14 +105,11 @@ export default function ContactSection() {
 
         {/* Botón enviar */}
         <button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            // Funcionalidad a implementar
-          }}
-          className="bg-white text-[#854319] px-6 sm:px-8 md:px-10 lg:px-12 py-2 rounded-md font-bold text-lg lg:text-xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3"
+          onClick={() => window.open("#", "_blank")}
+          className="bg-white text-[#854319] px-10  lg:px-12 py-1  font-semibold text-md lg:text-xl xl:text-2xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-1 n w-fit cursor-pointer"
         >
-          ENVIAR
+          <p className="font-extrabold">ENVIAR</p>
+          <MdOutlineKeyboardDoubleArrowLeft className="text-[30px] lg:text-[36px] xl:text-[40px]" />
         </button>
       </div>
     </section>

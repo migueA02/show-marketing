@@ -24,6 +24,21 @@
   font-display: swap;
 }
 
+/**
+ * Fuente Rosewood Std Fill
+ * Para títulos decorativos o branding
+ */
+@font-face {
+  font-family: "Rosewood Std Fill";
+  src: url("/fonts/Rosewood-Std-Fill.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -154,3 +169,11 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+/* Rosewood Std Fill */
+.font-rosewood {
+  font-family: "Rosewood Std Fill", serif;
+}
+
+.font-acumin {
+    font-family: "Acumin Pro", sans-serif;
+  }
