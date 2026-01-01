@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 /**
- * Fuente Colfax BLACK
- * Configuración de fuente local para uso en el proyecto
+ * Fuente Grifter Bold
+ * Para títulos grandes y encabezados
  */
 @font-face {
-  font-family: "Colfax";
-  src: url("/fonts/colfax-black.otf") format("opentype");
-  font-weight: 900;
+  font-family: "Grifter Bold";
+  src: url("/fonts/grifterbold.otf") format("opentype");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 /**
- * Fuente Acumin Pro Semibold
- * Para textos secundarios y botones
+ * Fuente Helvetica LT Bold
+ * Para textos normales y botones
  */
 @font-face {
-  font-family: "Acumin Pro";
-  src: url("/fonts/fonnts.com-Acumin_Pro_Semibold.otf") format("opentype");
-  font-weight: 600;
+  font-family: "Helvetica LT Bold";
+  src: url("/fonts/Helvetica LT Bold.ttf") format("truetype");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
