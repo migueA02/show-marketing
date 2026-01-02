@@ -1,12 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 import Image from "next/image";
 
 export default function Contact() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  
+  // Estados del formulario
+  const [formData, setFormData] = useState({
+    nombre: "",
+    apellido: "",
+    email: "",
+    telefono: "",
+    mensaje: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<{
+    type: "success" | "error" | null;
+    text: string;
+  }>({ type: null, text: "" });
 
   useEffect(() => {
     // Disconnect observer after first intersection to reduce work
@@ -39,6 +53,76 @@ export default function Contact() {
     };
   }, []);
 
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Limpiar mensajes al escribir
+    if (submitMessage.type) {
+      setSubmitMessage({ type: null, text: "" });
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitMessage({ type: null, text: "" });
+
+    // Validación básica
+    if (!formData.nombre || !formData.apellido || !formData.email || !formData.telefono) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor complete todos los campos requeridos",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, source: 'show-marketing' }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitMessage({
+          type: "success",
+          text: data.message || "Mensaje enviado exitosamente. Nos pondremos en contacto pronto.",
+        });
+        // Limpiar formulario
+        setFormData({
+          nombre: "",
+          apellido: "",
+          email: "",
+          telefono: "",
+          mensaje: "",
+        });
+      } else {
+        setSubmitMessage({
+          type: "error",
+          text: data.error || "Error al enviar el mensaje. Por favor intente nuevamente.",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setSubmitMessage({
+        type: "error",
+        text: "Error al enviar el mensaje. Por favor intente más tarde.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section
       ref={sectionRef}
@@ -57,32 +141,44 @@ export default function Contact() {
         </h2>
 
         {/* Formulario */}
-        <form className="w-full max-w-md md:max-w-lg space-y-4 md:space-y-5">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md md:max-w-lg space-y-4 md:space-y-5"
+        >
           {/* Nombre */}
           <input
             type="text"
             name="nombre"
+            value={formData.nombre}
+            onChange={handleInputChange}
             placeholder="Nombre"
             aria-label="Nombre"
-            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-white text-black text-sm md:text-base placeholder:text-gray-500 font-helvetica"
+            required
+            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-black/20 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-black text-sm md:text-base placeholder:text-black/50 font-helvetica transition-all duration-200"
           />
 
           {/* Apellido */}
           <input
             type="text"
             name="apellido"
+            value={formData.apellido}
+            onChange={handleInputChange}
             placeholder="Apellido"
             aria-label="Apellido"
-            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-white text-black text-sm md:text-base placeholder:text-gray-500 font-helvetica"
+            required
+            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-black/20 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-black text-sm md:text-base placeholder:text-black/50 font-helvetica transition-all duration-200"
           />
 
           {/* Correo */}
           <input
             type="email"
             name="email"
+            value={formData.email}
+            onChange={handleInputChange}
             placeholder="Correo"
             aria-label="Correo electrónico"
-            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-white text-black text-sm md:text-base placeholder:text-gray-500 font-helvetica"
+            required
+            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-black/20 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-black text-sm md:text-base placeholder:text-black/50 font-helvetica transition-all duration-200"
           />
 
           {/* Teléfono con bandera de Costa Rica */}
@@ -100,28 +196,51 @@ export default function Contact() {
             <input
               type="tel"
               name="telefono"
+              value={formData.telefono}
+              onChange={handleInputChange}
               placeholder="Número de teléfono"
               aria-label="Número de teléfono de Costa Rica"
-              className="w-full pl-12 md:pl-14 pr-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-white text-black text-sm md:text-base placeholder:text-gray-500 font-helvetica"
+              required
+              className="w-full pl-12 md:pl-14 pr-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-black/20 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-black text-sm md:text-base placeholder:text-black/50 font-helvetica transition-all duration-200"
             />
           </div>
 
           {/* Información adicional */}
           <textarea
             name="mensaje"
+            value={formData.mensaje}
+            onChange={handleInputChange}
             placeholder="Información adicional"
             aria-label="Comentarios o información adicional"
             rows={4}
-            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-white text-black text-sm md:text-base placeholder:text-gray-500 font-helvetica resize-none"
+            className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-black/20 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-black text-sm md:text-base placeholder:text-black/50 font-helvetica resize-none transition-all duration-200"
           />
+
+          {/* Mensajes de éxito/error */}
+          {submitMessage.type && (
+            <div
+              className={`w-full px-4 py-3 rounded-lg text-sm md:text-base text-center font-helvetica border-2 ${
+                submitMessage.type === "success"
+                  ? "bg-white text-black border-black"
+                  : "bg-black text-white border-white"
+              }`}
+            >
+              {submitMessage.text}
+            </div>
+          )}
 
           {/* Botón Enviar */}
           <div className="flex justify-center pt-2">
             <button
               type="submit"
-              className="bg-transparent border-2 border-white text-white font-helvetica px-8 py-3 md:px-10 md:py-4 rounded-lg hover:bg-white hover:text-black transition-all text-sm md:text-base uppercase tracking-wider pulse-cta"
+              disabled={isSubmitting}
+              className={`bg-transparent border-2 border-white text-white font-helvetica px-8 py-3 md:px-10 md:py-4 rounded-lg hover:bg-white hover:text-black transition-all duration-300 text-sm md:text-base uppercase tracking-wider pulse-cta shadow-lg hover:shadow-xl ${
+                isSubmitting
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:scale-105"
+              }`}
             >
-              ENVIAR
+              {isSubmitting ? "ENVIANDO..." : "ENVIAR"}
             </button>
           </div>
         </form>

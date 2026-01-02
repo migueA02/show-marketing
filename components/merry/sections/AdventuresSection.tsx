@@ -51,6 +51,18 @@ export default function AdventuresSection() {
    * Ref del section para IntersectionObserver.
    */
   const sectionRef = useRef<HTMLElement>(null);
+  
+  // URLs de imágenes de Instagram (puedes pegarlas aquí directamente desde Instagram)
+  // Para obtener las URLs: Click derecho en la imagen de Instagram > "Copiar dirección de la imagen"
+  // NOTA: Instagram puede bloquear hotlinking, si las imágenes no cargan, usa las imágenes estáticas locales
+  const instagramImageUrls = [
+    "/img/merry/Aventuras_1.png", // Reemplaza con URL de Instagram si deseas: "https://..."
+    "/img/merry/Aventuras_2.png",
+    "/img/merry/Aventuras_3.png",
+    "/img/merry/Aventuras_4.png",
+    "/img/merry/Aventuras_5.png",
+    "/img/merry/Aventuras_6.png",
+  ];
 
   useEffect(() => {
     // Activa la animación de entrada al detectar intersección.
@@ -124,16 +136,9 @@ export default function AdventuresSection() {
           />
         </button>
 
-        {/* Grid de posts con placeholders de imagen */}
+        {/* Grid de posts con imágenes de Instagram o locales */}
         <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-5 max-w-[900px] mx-auto">
-          {[
-            "/img/merry/Aventuras_1.png",
-            "/img/merry/Aventuras_2.png",
-            "/img/merry/Aventuras_3.png",
-            "/img/merry/Aventuras_4.png",
-            "/img/merry/Aventuras_5.png",
-            "/img/merry/Aventuras_6.png",
-          ].map((imageSrc, index) => (
+          {instagramImageUrls.map((imageSrc, index) => (
             <div
               key={index}
               className="aspect-square rounded-lg md:rounded-xl relative overflow-hidden"
@@ -145,6 +150,7 @@ export default function AdventuresSection() {
                 height={400}
                 className="w-full h-full object-cover"
                 loading="lazy"
+                unoptimized={imageSrc.startsWith('http')} // Desactivar optimización para URLs externas
               />
             </div>
           ))}

@@ -1,72 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const grifterBold = localFont({
+  src: "../public/fonts/grifterbold.otf",
+  variable: "--font-grifter",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const helveticaBold = localFont({
+  src: "../public/fonts/Helvetica LT Bold.ttf",
+  variable: "--font-helvetica",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Doña Merry - Content Creator & Entertainer | ShowMarketing",
-  description: "Doña Merry - La Gran Ingeniera del Hogar. Entretenimiento, aventuras, colaboraciones y eventos con ShowMarketing. ¡Bienvenidos Chiquillos!",
-  keywords: [
-    "Doña Merry",
-    "ShowMarketing",
-    "Content Creator",
-    "Entretenimiento",
-    "Eventos",
-    "Aventuras",
-    "Costa Rica",
-    "Colaboraciones",
-    "Redes Sociales",
-  ],
-  authors: [{ name: "ShowMarketing" }],
-  creator: "ShowMarketing",
-  publisher: "ShowMarketing",
-  metadataBase: new URL("https://showmarketing.cr"),
-  alternates: {
-    canonical: "https://showmarketing.cr/merry",
-  },
-  openGraph: {
-    type: "website",
-    locale: "es_ES",
-    url: "https://showmarketing.cr/merry",
-    title: "Doña Merry - La Gran Ingeniera del Hogar",
-    description: "Descubre aventuras, stickers, colaboraciones, eventos y más con Doña Merry.",
-    siteName: "ShowMarketing",
-    images: [
-      {
-        url: "https://showmarketing.cr/img/merry/Merry-2.png",
-        width: 1200,
-        height: 630,
-        alt: "Doña Merry - La Gran Ingeniera del Hogar",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Doña Merry - Content Creator & Entertainer",
-    description: "La Gran Ingeniera del Hogar. Entretenimiento y aventuras con ShowMarketing.",
-    creator: "@merry_oficial",
-    images: ["https://showmarketing.cr/img/merry/Merry-2.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  title: "ShowMarketing Producciones - Talentos y Eventos",
+  description: "Agencia de talentos, shows en vivo, eventos corporativos y producción de contenido. ShowMarketing Producciones.",
+  keywords: ["ShowMarketing", "Talentos", "Shows", "Eventos", "Producción", "Costa Rica"],
 };
 
 export default function RootLayout({
@@ -111,9 +62,19 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${grifterBold.variable} ${helveticaBold.variable} bg-black text-white antialiased`}
         suppressHydrationWarning
       >
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            .font-grifter {
+              font-family: var(--font-grifter), sans-serif;
+            }
+            .font-helvetica {
+              font-family: var(--font-helvetica), sans-serif;
+            }
+          `
+        }} />
         {children}
       </body>
     </html>
