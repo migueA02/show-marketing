@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, FormEvent } from "react";
 import Image from "next/image";
 
 /**
@@ -51,6 +51,20 @@ export default function ContactSection() {
    * Ref del section para IntersectionObserver.
    */
   const sectionRef = useRef<HTMLElement>(null);
+  
+  // Estados del formulario
+  const [formData, setFormData] = useState({
+    nombre: "",
+    apellido: "",
+    email: "",
+    telefono: "",
+    mensaje: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<{
+    type: "success" | "error" | null;
+    text: string;
+  }>({ type: null, text: "" });
 
   useEffect(() => {
     // Observa entrada al viewport y habilita la animación de fade/slide.
@@ -74,6 +88,76 @@ export default function ContactSection() {
     };
   }, []);
 
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Limpiar mensajes al escribir
+    if (submitMessage.type) {
+      setSubmitMessage({ type: null, text: "" });
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitMessage({ type: null, text: "" });
+
+    // Validación básica
+    if (!formData.nombre || !formData.apellido || !formData.email || !formData.telefono) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor complete todos los campos requeridos",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, source: 'merry' }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitMessage({
+          type: "success",
+          text: data.message || "Mensaje enviado exitosamente. Nos pondremos en contacto pronto.",
+        });
+        // Limpiar formulario
+        setFormData({
+          nombre: "",
+          apellido: "",
+          email: "",
+          telefono: "",
+          mensaje: "",
+        });
+      } else {
+        setSubmitMessage({
+          type: "error",
+          text: data.error || "Error al enviar el mensaje. Por favor intente nuevamente.",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setSubmitMessage({
+        type: "error",
+        text: "Error al enviar el mensaje. Por favor intente más tarde.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
 
   return (
     <section
@@ -95,13 +179,19 @@ export default function ContactSection() {
         </h2>
 
         {/* Formulario compacto con campos básicos de contacto */}
-        <form className="w-full max-w-sm md:max-w-md lg:max-w-lg space-y-4 md:space-y-5 lg:space-y-6 mb-8 sm:mb-10 md:mb-12 lg:mb-14">
+        <form 
+          onSubmit={handleSubmit}
+          className="w-full max-w-sm md:max-w-md lg:max-w-lg space-y-4 md:space-y-5 lg:space-y-6 mb-8 sm:mb-10 md:mb-12 lg:mb-14"
+        >
           {/* Nombre */}
           <input
             type="text"
             name="nombre"
+            value={formData.nombre}
+            onChange={handleInputChange}
             placeholder="Nombre"
             aria-label="Nombre completo"
+            required
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
 
@@ -109,8 +199,11 @@ export default function ContactSection() {
           <input
             type="text"
             name="apellido"
+            value={formData.apellido}
+            onChange={handleInputChange}
             placeholder="Apellido"
             aria-label="Apellido"
+            required
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
 
@@ -118,8 +211,11 @@ export default function ContactSection() {
           <input
             type="email"
             name="email"
+            value={formData.email}
+            onChange={handleInputChange}
             placeholder="Correo"
             aria-label="Correo electrónico"
+            required
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
 
@@ -138,8 +234,11 @@ export default function ContactSection() {
             <input
               type="tel"
               name="telefono"
+              value={formData.telefono}
+              onChange={handleInputChange}
               placeholder="Número de teléfono"
               aria-label="Número de teléfono de Costa Rica"
+              required
               className="w-full pl-12 md:pl-14 lg:pl-16 pr-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
             />
           </div>
@@ -147,34 +246,52 @@ export default function ContactSection() {
           {/* Información adicional */}
           <textarea
             name="mensaje"
+            value={formData.mensaje}
+            onChange={handleInputChange}
             placeholder="Información adicional:"
             rows={4}
             aria-label="Información adicional o mensaje"
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 resize-none text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
-        </form>
 
-        {/* CTA de envío (lógica de backend pendiente) */}
-        <button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            // Funcionalidad a implementar
-          }}
-          aria-label="Enviar formulario de contacto a Doña Merry"
-          className="bg-[#7e1ad2] text-white px-16 sm:px-20 md:px-24 lg:px-28 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-3 md:gap-4 pulse-cta"
-          style={{ fontFamily: "Colfax, sans-serif" }}
-        >
-          
-          <span>ENVIAR</span>
-          <Image
-            src="/img/merry/flecha.png"
-            alt="Flechas"
-            width={40}
-            height={40}
-            className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 object-contain"
-          />
-        </button>
+          {/* Mensajes de éxito/error */}
+          {submitMessage.type && (
+            <div
+              className={`w-full px-4 py-3 rounded-lg text-sm md:text-base text-center font-semibold ${
+                submitMessage.type === "success"
+                  ? "bg-[#7e1ad2] text-white"
+                  : "bg-[#67c7db] text-white"
+              }`}
+              style={{ fontFamily: "Colfax, sans-serif" }}
+            >
+              {submitMessage.text}
+            </div>
+          )}
+
+          {/* CTA de envío */}
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              aria-label="Enviar formulario de contacto a Doña Merry"
+              className={`bg-[#7e1ad2] text-white px-16 sm:px-20 md:px-24 lg:px-28 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-3 md:gap-4 pulse-cta ${
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              style={{ fontFamily: "Colfax, sans-serif" }}
+            >
+              <span>{isSubmitting ? "ENVIANDO..." : "ENVIAR"}</span>
+              {!isSubmitting && (
+                <Image
+                  src="/img/merry/flecha.png"
+                  alt="Flechas"
+                  width={40}
+                  height={40}
+                  className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 object-contain"
+                />
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </section>
   );

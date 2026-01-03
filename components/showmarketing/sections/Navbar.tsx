@@ -56,7 +56,7 @@ export default function Navbar() {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    const url = `/showmarketing?sec=${encodeURIComponent(sec)}`;
+    const url = `/?sec=${encodeURIComponent(sec)}`;
     window.history.replaceState(null, "", url);
 
     menuButtonRef.current?.focus();
@@ -80,7 +80,7 @@ export default function Navbar() {
         {/* Navegación desktop */}
         <nav aria-label="Navegación principal" className="hidden xl:flex items-center gap-4 xl:gap-6">
           {NAV_ITEMS.map((item) => {
-            const href = `/showmarketing?sec=${item.sec}`;
+            const href = `/?sec=${item.sec}`;
 
             return (
               <a
@@ -148,7 +148,7 @@ export default function Navbar() {
           <div className="w-full rounded-2xl bg-white shadow-xl ring-1 ring-black/10 overflow-hidden">
             <ul className="flex flex-col py-2">
               {NAV_ITEMS.map((item) => {
-                const href = `/showmarketing?sec=${item.sec}`;
+                const href = `/?sec=${item.sec}`;
 
                 return (
                   <li key={item.sec}>

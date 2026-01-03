@@ -3,6 +3,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
+// Declaración de tipos para Instagram embeds
+declare global {
+  interface Window {
+    instgrm?: {
+      Embeds: {
+        process: () => void;
+      };
+    };
+  }
+}
+
 /**
  * CollaborationsSection Component
  *
@@ -61,11 +72,12 @@ import Image from "next/image";
 export default function CollaborationsSection() {
   /**
    * Slides base; se triplican para lograr bucle continuo.
+   * URLs de los videos de Instagram embeds
    */
   const baseSlides = [
-    { id: 1, url: "#" },
-    { id: 2, url: "#" },
-    { id: 3, url: "#" },
+    { id: 1, url: "https://www.instagram.com/reel/DNn4cJvtBgx/" },
+    { id: 2, url: "https://www.instagram.com/reel/DJ2au_DB9pY/" },
+    { id: 3, url: "https://www.instagram.com/reel/DP2ZvLDj4qo/" },
   ];
   const loopSlides = [...baseSlides, ...baseSlides, ...baseSlides];
   const loopSegmentLength = baseSlides.length;
@@ -126,6 +138,46 @@ export default function CollaborationsSection() {
   }, []);
 
   useEffect(() => {
+    // Cargar script de Instagram embeds solo si no existe
+    let script: HTMLScriptElement | null = document.querySelector('script[src="//www.instagram.com/embed.js"]');
+    
+    if (!script) {
+      script = document.createElement('script');
+      script.src = '//www.instagram.com/embed.js';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+
+    // Función para procesar embeds
+    const processEmbeds = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      } else {
+        // Si el script aún no está listo, intentar de nuevo después de un breve delay
+        setTimeout(processEmbeds, 100);
+      }
+    };
+
+    // Procesar embeds después de que el script se carga
+    if (script) {
+      if (window.instgrm) {
+        // Si ya está cargado, procesar inmediatamente
+        processEmbeds();
+      } else {
+        script.onload = processEmbeds;
+      }
+    }
+
+    // También procesar después de un breve delay para asegurar que el DOM esté listo
+    const timeoutId = setTimeout(processEmbeds, 500);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  useEffect(() => {
     // Posiciona inicialmente en el bloque central para permitir desplazamiento infinito.
     if (!carouselRef.current) return;
     const slides = carouselRef.current.children;
@@ -134,6 +186,17 @@ export default function CollaborationsSection() {
     if (middleSlide) {
       carouselRef.current.scrollTo({ left: middleSlide.offsetLeft, behavior: "auto" });
     }
+
+    // Procesar embeds de Instagram después de que el carrusel se inicialice
+    const processEmbeds = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      }
+    };
+
+    // Procesar después de un breve delay para asegurar que el DOM esté listo
+    const timeoutId = setTimeout(processEmbeds, 300);
+    return () => clearTimeout(timeoutId);
   }, [loopSegmentLength]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -279,26 +342,16 @@ export default function CollaborationsSection() {
           >
             {loopSlides.map((video, idx) => (
               <div
-                key={`${video.id}-${idx}`}
-                className="flex-shrink-0 w-[85%] sm:w-[80%] md:w-[70%] lg:w-[60%] aspect-video bg-gray-300 rounded-lg md:rounded-xl relative snap-center overflow-hidden motion-lift"
-                onClick={() => {
-                  if (hasDraggedRef.current) return;
-                  // URL a cambiar por el usuario; se bloquea si hubo arrastre.
-                  window.open(video.url, "_blank");
-                }}
-              >
-                {/* Placeholder de video - Falta asset para thumbnail de video {video.id} */}
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-300 cursor-pointer hover:opacity-90 transition-opacity">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full bg-white/80 flex items-center justify-center z-10">
-                    <Image
-                      src="/img/merry/Play.png"
-                      alt="Play button"
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                </div>
+  key={`${video.id}-${idx}`}
+  className="flex-shrink-0 snap-center motion-lift flex items-center justify-center w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] max-w-[420px]"
+>
+
+                {/* Instagram embed - Dejar que Instagram defina su tamaño natural */}
+                <blockquote
+                  className="instagram-media"
+                  data-instgrm-permalink={video.url}
+                  data-instgrm-version="14"
+                />
               </div>
             ))}
           </div>
