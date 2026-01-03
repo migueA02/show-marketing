@@ -48,7 +48,7 @@ export default function StickersSection() {
         </div>
 
         {/* Grid de stickers */}
-         <div className="w-full grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-2 max-w-[800px] mx-auto">
+        <div className="w-full grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-2 max-w-[800px] mx-auto">
           {stickers.map((sticker, index) => (
             <div
               key={index}
@@ -69,7 +69,7 @@ export default function StickersSection() {
         <div id="channel"></div>
         {/* Botón de descarga */}
         <button
-          onClick={() => window.open("#", "_blank")}
+          onClick={() => window.open("https://sticker.ly/s/FUXG3L", "_blank")}
           className="bg-white text-[#854319] px-6 sm:px-8 md:px-10 lg:px-12 py-1  rounded-xl font-semibold text-md lg:text-xl xl:text-2xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3 xl:gap-4 n w-fit cursor-pointer motion-lift"
         >
           <p className="font-extrabold">DESCÁRGALOS</p>
@@ -79,7 +79,6 @@ export default function StickersSection() {
     </section>
   );
 }
-
 
 // "use client";
 
@@ -259,7 +258,7 @@ export default function StickersSection() {
 //             fontWeight: 600, // Semibold
 //           }}
 //         >
-          
+
 //           <span>DESCARGAR AQUÍ</span>
 //           <Image
 //             src="/img/merry/flecha.png"

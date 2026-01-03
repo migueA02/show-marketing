@@ -63,8 +63,8 @@ export default function Navbar() {
   };
 
   return (
-    <header className="w-full bg-[#ffffff]">
-      <div className="flex w-full items-center justify-between px-6 py-6 md:px-8 md:py-7">
+    <header className="w-full bg-[#ffffff] pr-0 md:pr-20">
+      <div className="flex w-full gap-32  items-center justify-between px-6  md:px-20 ">
         {/* Logos */}
         <div className="flex items-center gap-4 md:gap-5 ml-2 sm:ml-3">
           <Image
@@ -73,12 +73,12 @@ export default function Navbar() {
             width={1000}
             height={1000}
             priority
-            className="w-32 h-auto sm:w-40 md:w-48 object-contain"
+            className="w-28 h-[80px] sm:w-40 md:w-36 object-contain"
           />
         </div>
 
         {/* Navegación desktop */}
-        <nav aria-label="Navegación principal" className="hidden xl:flex items-center gap-4 xl:gap-6">
+        <nav aria-label="Navegación principal" className="hidden xl:flex items-center gap-4 xl:gap-6 w-full justify-between">
           {NAV_ITEMS.map((item) => {
             const href = `/?sec=${item.sec}`;
 
