@@ -72,12 +72,23 @@ declare global {
 export default function CollaborationsSection() {
   /**
    * Slides base; se triplican para lograr bucle continuo.
-   * URLs de los videos de Instagram embeds
+   * URLs de los videos de colaboraciones de Doña Merry
+   * Incluye YouTube, Facebook e Instagram
+   * format: "vertical" para reels/shorts, "horizontal" para videos normales
    */
   const baseSlides = [
-    { id: 1, url: "https://www.instagram.com/reel/DNn4cJvtBgx/" },
-    { id: 2, url: "https://www.instagram.com/reel/DJ2au_DB9pY/" },
-    { id: 3, url: "https://www.instagram.com/reel/DP2ZvLDj4qo/" },
+    //{ id: 1, url: "https://www.facebook.com/McDonaldsCostaRica/videos/974803979895477", type: "facebook", title: "McDonald's", format: "horizontal" },
+    { id: 2, url: "https://www.youtube.com/watch?v=IzapTews1x0", type: "youtube", title: "Tío Pelón", format: "horizontal" },
+    { id: 3, url: "https://www.facebook.com/reel/210804173163897", type: "facebook", title: "Tío Pelón", format: "vertical" },
+    { id: 4, url: "https://www.facebook.com/reel/780605416996943", type: "facebook", title: "Economy Rent a Car", format: "vertical" },
+    { id: 5, url: "https://www.facebook.com/reel/669878861876447", type: "facebook", title: "Carrera Avon", format: "vertical" },
+    { id: 6, url: "https://www.youtube.com/watch?v=c_YGWZAKIqw", type: "youtube", title: "Malla en Bolsa", format: "horizontal" },
+    { id: 7, url: "https://www.facebook.com/reel/934124890994718", type: "facebook", title: "Mercado de las Telas", format: "vertical" },
+    { id: 8, url: "https://www.facebook.com/reel/883775509596411", type: "facebook", title: "Foton", format: "vertical" },
+    { id: 9, url: "https://www.facebook.com/reel/361891106370894", type: "facebook", title: "Dr Bolaños", format: "vertical" },
+    { id: 10, url: "https://www.facebook.com/reel/2513600912361504", type: "facebook", title: "Electrolit", format: "vertical" },
+    { id: 11, url: "https://www.facebook.com/reel/1571070084264978", type: "facebook", title: "CR Eléctricos", format: "vertical" },
+    { id: 12, url: "https://www.youtube.com/shorts/JtyUJ1KapRA", type: "youtube", title: "Fibra en Casa", format: "vertical" },
   ];
   const loopSlides = [...baseSlides, ...baseSlides, ...baseSlides];
   const loopSegmentLength = baseSlides.length;
@@ -271,6 +282,22 @@ export default function CollaborationsSection() {
     }
   };
 
+  /**
+   * Navega al siguiente video en el carrusel
+   */
+  const nextVideo = () => {
+    const nextIndex = (currentSlide + 1) % loopSegmentLength;
+    goToSlide(nextIndex);
+  };
+
+  /**
+   * Navega al video anterior en el carrusel
+   */
+  const prevVideo = () => {
+    const prevIndex = (currentSlide - 1 + loopSegmentLength) % loopSegmentLength;
+    goToSlide(prevIndex);
+  };
+
   const handleScroll = () => {
     if (!carouselRef.current) return;
     const container = carouselRef.current;
@@ -299,7 +326,7 @@ export default function CollaborationsSection() {
     <section
       id="collaborations"
       ref={sectionRef}
-      className="w-full bg-[#7e1ad2] py-12 sm:py-16 md:py-20 lg:py-24"
+      className="w-full bg-[#7E1AD2] py-12 sm:py-16 md:py-20 lg:py-24"
     >
       <div
         className={`w-full max-w-[1200px] mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 ${
@@ -320,7 +347,7 @@ export default function CollaborationsSection() {
         </p>
 
         {/* Carrusel de videos */}
-        <div className="w-full mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+        <div className="w-full mb-6 sm:mb-8 md:mb-10 lg:mb-12 relative">
           <div
             ref={carouselRef}
             onMouseDown={handleMouseDown}
@@ -340,21 +367,102 @@ export default function CollaborationsSection() {
               touchAction: "pan-x",
             }}
           >
-            {loopSlides.map((video, idx) => (
-              <div
-  key={`${video.id}-${idx}`}
-  className="flex-shrink-0 snap-center motion-lift flex items-center justify-center w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] max-w-[420px]"
->
+            {loopSlides.map((video, idx) => {
+              /**
+               * Convierte URL de YouTube a formato embed
+               */
+              const getYouTubeEmbedUrl = (url: string): string => {
+                // Manejar shorts y videos normales
+                const shortsMatch = url.match(/youtube\.com\/shorts\/([^?&\s]+)/);
+                if (shortsMatch) {
+                  return `https://www.youtube.com/embed/${shortsMatch[1]}`;
+                }
+                const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^?&\s]+)/)?.[1];
+                return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+              };
 
-                {/* Instagram embed - Dejar que Instagram defina su tamaño natural */}
-                <blockquote
-                  className="instagram-media"
-                  data-instgrm-permalink={video.url}
-                  data-instgrm-version="14"
-                />
-              </div>
-            ))}
+              /**
+               * Convierte URL de Facebook a formato embed
+               */
+              const getFacebookEmbedUrl = (url: string): string => {
+                const encodedUrl = encodeURIComponent(url);
+                return `https://www.facebook.com/plugins/video.php?href=${encodedUrl}&show_text=false&width=476`;
+              };
+
+              /**
+               * Frame unificado para todos los videos
+               * Usa aspect ratio en lugar de altura fija para eliminar espacio gris
+               * Ancho controlado por vw + min/max
+               */
+              const frameWidth = video.format === "vertical"
+                ? "w-[62vw] max-w-[280px] min-w-[220px] lg:max-w-[320px]"
+                : "w-[84vw] max-w-[420px] min-w-[320px] lg:max-w-[760px]";
+
+              const frameAspect = video.format === "vertical"
+                ? "aspect-[9/16]"
+                : "aspect-video";
+
+              const frameClass = `${frameWidth} ${frameAspect}`;
+
+              /**
+               * Para Instagram, usar el sistema de embeds de Instagram
+               */
+              if (video.type === "instagram") {
+                return (
+                  <div
+                    key={`${video.id}-${idx}`}
+                    className={`flex-shrink-0 snap-center motion-lift rounded-xl overflow-hidden bg-black/10 ${frameClass}`}
+                  >
+                    <blockquote
+                      className="instagram-media"
+                      data-instgrm-permalink={video.url}
+                      data-instgrm-version="14"
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  </div>
+                );
+              }
+
+              /**
+               * Para YouTube y Facebook, usar iframe
+               */
+              const embedSrc = video.type === "youtube" 
+                ? getYouTubeEmbedUrl(video.url)
+                : getFacebookEmbedUrl(video.url);
+
+              return (
+                <div
+                  key={`${video.id}-${idx}`}
+                  className={`flex-shrink-0 snap-center motion-lift rounded-xl overflow-hidden bg-black/10 ${frameClass}`}
+                >
+                  <iframe
+                    src={embedSrc}
+                    title={video.title || `Video ${video.id}`}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+              );
+            })}
           </div>
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevVideo}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/50 hover:bg-white/70 rounded-full flex items-center justify-center text-[#7E1AD2] transition-colors z-10"
+            aria-label="Video anterior"
+          >
+            ‹
+          </button>
+          <button
+            onClick={nextVideo}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/50 hover:bg-white/70 rounded-full flex items-center justify-center text-[#7E1AD2] transition-colors z-10"
+            aria-label="Video siguiente"
+          >
+            ›
+          </button>
+
           <style jsx>{`
             .scrollbar-hide::-webkit-scrollbar {
               display: none;
@@ -363,8 +471,8 @@ export default function CollaborationsSection() {
         </div>
 
         {/* Indicadores de paginación - clickeables */}
-        <div className="flex gap-2 md:gap-3 justify-center">
-          {[0, 1, 2].map((index) => (
+        <div className="flex gap-2 md:gap-3 justify-center flex-wrap">
+          {baseSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}

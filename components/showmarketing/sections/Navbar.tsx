@@ -39,6 +39,54 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
+  /**
+   * Calcula dinámicamente la altura real del header para compensar el scroll.
+   * Obtiene la altura real del elemento header en lugar de usar valores fijos.
+   */
+  const getHeaderOffset = (): number => {
+    if (typeof window === "undefined") return 0;
+    
+    const header = document.querySelector("header");
+    if (!header) return 0;
+    
+    return header.offsetHeight;
+  };
+
+  /**
+   * Scroll a sección con offset para compensar header.
+   * Calcula la posición exacta considerando la altura real del header
+   * y añade un pequeño margen adicional (16px) para mejor visualización.
+   */
+  const scrollToSectionWithOffset = (targetId: string): void => {
+    const element = document.getElementById(targetId);
+    if (!element) return;
+
+    const headerOffset = getHeaderOffset();
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset - 16;
+
+    window.scrollTo({
+      top: Math.max(0, offsetPosition),
+      behavior: "smooth",
+    });
+  };
+
+  /**
+   * Deep-linking inicial (?sec=)
+   */
+  useEffect(() => {
+    const sec = new URLSearchParams(window.location.search).get("sec");
+    if (!sec) return;
+
+    const match = NAV_ITEMS.find((i) => i.sec === sec);
+    if (!match) return;
+
+    requestAnimationFrame(() => {
+      scrollToSectionWithOffset(match.targetId);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Navegación con scroll suave
   const scrollToSection = async (
     targetId: string,
@@ -47,14 +95,11 @@ export default function Navbar() {
   ) => {
     e.preventDefault();
 
-    const target = document.getElementById(targetId);
     setIsOpen(false);
 
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    scrollToSectionWithOffset(targetId);
 
     const url = `/?sec=${encodeURIComponent(sec)}`;
     window.history.replaceState(null, "", url);

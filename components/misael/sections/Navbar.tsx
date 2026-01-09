@@ -22,7 +22,7 @@ export default function Navbar() {
 
    const NAV_ITEMS = [
     { label: "Inicio", targetId: "hero", sec: "inicio" },
-    { label: "Redes", targetId: "social-stats", sec: "" },
+    { label: "Redes", targetId: "social-stats", sec: "redes" },
     { label: "Cerveza Semental", targetId: "beer", sec: "cerveza-semental" },
     { label: "Colaboraciones", targetId: "collaborations", sec: "colaboraciones" },
     { label: "Banda MR", targetId: "band", sec: "banda-mr" },
@@ -56,6 +56,38 @@ export default function Navbar() {
   }, [isOpen]);
 
   /**
+   * Calcula dinámicamente la altura real del header para compensar el scroll.
+   * Obtiene la altura real del elemento header en lugar de usar valores fijos.
+   */
+  const getHeaderOffset = (): number => {
+    if (typeof window === "undefined") return 120;
+    
+    const header = document.querySelector("header");
+    if (!header) return 120;
+    
+    return header.offsetHeight;
+  };
+
+  /**
+   * Scroll a sección con offset para compensar header fijo.
+   * Calcula la posición exacta considerando la altura real del header
+   * y añade un pequeño margen adicional (16px) para mejor visualización.
+   */
+  const scrollToSectionWithOffset = (targetId: string): void => {
+    const element = document.getElementById(targetId);
+    if (!element) return;
+
+    const headerOffset = getHeaderOffset();
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset - 16;
+
+    window.scrollTo({
+      top: Math.max(0, offsetPosition),
+      behavior: "smooth",
+    });
+  };
+
+  /**
    * Deep-linking inicial (?sec=)
    */
   useEffect(() => {
@@ -66,9 +98,7 @@ export default function Navbar() {
     if (!match) return;
 
     requestAnimationFrame(() => {
-      document
-        .getElementById(match.targetId)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToSectionWithOffset(match.targetId);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -84,9 +114,7 @@ export default function Navbar() {
 
     await new Promise<void>((r) => requestAnimationFrame(() => r()));
 
-    document
-      .getElementById(targetId)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToSectionWithOffset(targetId);
 
     const url = sec === "inicio" ? "/misael" : `/misael?sec=${encodeURIComponent(sec)}`;
     window.history.replaceState(null, "", url);
@@ -124,7 +152,7 @@ export default function Navbar() {
           {NAV_ITEMS.map((item) => (
             <a
               key={item.sec}
-              href={item.sec === "inicio" ? "/merry" : `/merry?sec=${item.sec}`}
+              href={item.sec === "inicio" ? "/misael" : `/misael?sec=${item.sec}`}
               onClick={(e) => scrollToSection(item.targetId, item.sec, e)}
               className="font-black uppercase tracking-tight text-white hover:text-[#854319] transition-all text-sm xl:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#854319] focus-visible:ring-offset-2 hover:scale-105 duration-150"
             >
@@ -174,7 +202,7 @@ export default function Navbar() {
               {NAV_ITEMS.map((item) => (
                 <li key={item.sec}>
                   <a
-                    href={item.sec === "inicio" ? "/merry" : `/merry?sec=${item.sec}`}
+                    href={item.sec === "inicio" ? "/misael" : `/misael?sec=${item.sec}`}
                     onClick={(e) => scrollToSection(item.targetId, item.sec, e)}
                     className="block w-full px-5 py-3 font-black uppercase tracking-tight text-[#171717] hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#854319] focus-visible:ring-inset"
                   >

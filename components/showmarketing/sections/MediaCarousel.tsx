@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import Image from "next/image";
 
 export default function MediaCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const totalSlides = 4;
 
   useEffect(() => {
     // Disconnect observer after first intersection to reduce work
@@ -41,13 +39,32 @@ export default function MediaCarousel() {
     };
   }, []);
 
+  /**
+   * Convierte URL de YouTube a formato embed
+   */
+  const getYouTubeEmbedUrl = (url: string): string => {
+    const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^?&\s]+)/)?.[1];
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+  };
+
+  /**
+   * Convierte URL de Facebook a formato embed
+   */
+  const getFacebookEmbedUrl = (url: string): string => {
+    const encodedUrl = encodeURIComponent(url);
+    return `https://www.facebook.com/plugins/video.php?href=${encodedUrl}&show_text=false&width=476`;
+  };
+
   // Memoize slides array to prevent recreation
   const slides = useMemo(
     () => [
-      { id: 1, image: "/img/showmarketing/Img 1.png" },
-      { id: 2, image: "/img/showmarketing/Img 2.png" },
-      { id: 3, image: "/img/showmarketing/Img 3.png" },
-      { id: 4, image: "/img/showmarketing/Img 1.png" },
+      { 
+        id: 1, 
+        url: "https://www.youtube.com/watch?v=LPNZvd3us7s&t", 
+        type: "youtube", 
+        title: "Jorge Lozano",
+        format: "horizontal"
+      }
     ],
     []
   );
@@ -58,12 +75,12 @@ export default function MediaCarousel() {
   }, []);
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
-  }, [totalSlides]);
+    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  }, [slides.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
-  }, [totalSlides]);
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  }, [slides.length]);
 
   return (
     <section
@@ -80,36 +97,28 @@ export default function MediaCarousel() {
         <div className="relative">
           {/* Slides */}
           <div className="relative w-full aspect-video md:aspect-[16/9] rounded-2xl overflow-hidden">
-            {slides.map((slide, index) => (
-              <div
-                key={slide.id}
-                className={`absolute inset-0 transition-opacity duration-500 ${
-                  index === currentSlide ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                <Image
-                  src={slide.image}
-                  alt={`Slide ${slide.id}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                  className="object-cover"
-                />
-                {/* Play button overlay - grande y centrado */}
-                {index === currentSlide && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm cursor-pointer hover:bg-white/40 transition-colors">
-                      <svg
-                        className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 text-white ml-1"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+            {slides.map((slide, index) => {
+              const embedSrc = slide.type === "youtube"
+                ? getYouTubeEmbedUrl(slide.url!)
+                : getFacebookEmbedUrl(slide.url!);
+
+              return (
+                <div
+                  key={slide.id}
+                  className={`absolute inset-0 transition-opacity duration-500 ${
+                    index === currentSlide ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  <iframe
+                    src={embedSrc}
+                    title={slide.title || `Video ${slide.id}`}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+              );
+            })}
           </div>
 
           {/* Navigation Arrows */}

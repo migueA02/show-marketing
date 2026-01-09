@@ -38,9 +38,9 @@ const BeerSection = () => {
 
       <iframe
         height="450"
-        src="https://www.youtube.com/embed/PWlqcNWSqwA?si=NJv-UtrF6Avl_bCd&amp;controls=0"
-        title="YouTube video player"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share "
+        src="https://www.youtube.com/embed/PWlqcNWSqwA?si=hIwk06MjsZCCxYog"
+        title="YouTube video player - Cerveza de Misael"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         className="w-full max-w-300"
       ></iframe>
       <div id="collaborations"></div>

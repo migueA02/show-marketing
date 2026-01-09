@@ -94,22 +94,10 @@ export default function StickersSection() {
 
   /**
    * Maneja la descarga de stickers:
-   * - Redirige directamente a la tienda del dispositivo (App Store/Play Store/Web)
+   * - Redirige directamente al pack de stickers de Doña Merry
    */
   const handleStickerDownload = () => {
-    const userAgent = navigator.userAgent || navigator.vendor;
-    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
-    const isAndroid = /android/i.test(userAgent);
-
-    // Redirigir directamente a la tienda correspondiente
-    if (isIOS) {
-      window.open("https://apps.apple.com/app/stickerly/id1458326933", "_blank");
-    } else if (isAndroid) {
-      window.open("https://play.google.com/store/apps/details?id=com.stickerly.app", "_blank");
-    } else {
-      // Desktop o navegador desconocido
-      window.open("https://sticker.ly/", "_blank");
-    }
+    window.open("https://sticker.ly/s/01P5FG", "_blank");
   };
 
   return (

@@ -58,7 +58,7 @@ export default function FooterSection() {
   return (
     <footer
       ref={sectionRef}
-      className="w-full bg-[#7e1ad2] py-4 sm:py-5 md:py-6 lg:py-7"
+      className="w-full bg-[#7e1ad2] py-8 sm:py-10 md:py-12 lg:py-14"
     >
       <div
         className={`w-full max-w-[1200px] mx-auto flex justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 px-4 md:px-8 lg:px-12 ${
@@ -71,15 +71,15 @@ export default function FooterSection() {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16  flex items-center justify-center transition-opacity cursor-pointer p-2 motion-lift hover:opacity-80"
+            className="w-8 h-8 flex items-center justify-center transition-opacity cursor-pointer motion-lift hover:opacity-80"
             style={{ animationDelay: `${index * 50}ms` }}
             aria-label={`Visitar ${social.name}`}
           >
             <Image
               src={social.image}
               alt={`${social.name} icon`}
-              width={100}
-              height={100}
+              width={32}
+              height={32}
               className="w-full h-full object-contain"
             />
           </a>

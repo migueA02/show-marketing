@@ -55,6 +55,38 @@ export default function Header() {
   }, [isOpen]);
 
   /**
+   * Calcula dinámicamente la altura real del header para compensar el scroll.
+   * Obtiene la altura real del elemento header en lugar de usar valores fijos.
+   */
+  const getHeaderOffset = (): number => {
+    if (typeof window === "undefined") return 120;
+    
+    const header = document.querySelector("header");
+    if (!header) return 120;
+    
+    return header.offsetHeight;
+  };
+
+  /**
+   * Scroll a sección con offset para compensar header fijo.
+   * Calcula la posición exacta considerando la altura real del header
+   * y añade un pequeño margen adicional (16px) para mejor visualización.
+   */
+  const scrollToSectionWithOffset = (targetId: string): void => {
+    const element = document.getElementById(targetId);
+    if (!element) return;
+
+    const headerOffset = getHeaderOffset();
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset - 16;
+
+    window.scrollTo({
+      top: Math.max(0, offsetPosition),
+      behavior: "smooth",
+    });
+  };
+
+  /**
    * Deep-linking inicial (?sec=)
    */
   useEffect(() => {
@@ -65,9 +97,7 @@ export default function Header() {
     if (!match) return;
 
     requestAnimationFrame(() => {
-      document
-        .getElementById(match.targetId)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToSectionWithOffset(match.targetId);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -83,9 +113,7 @@ export default function Header() {
 
     await new Promise<void>((r) => requestAnimationFrame(() => r()));
 
-    document
-      .getElementById(targetId)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToSectionWithOffset(targetId);
 
     const url = sec === "inicio" ? "/merry" : `/merry?sec=${encodeURIComponent(sec)}`;
     window.history.replaceState(null, "", url);

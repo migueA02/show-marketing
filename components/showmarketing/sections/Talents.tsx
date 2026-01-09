@@ -11,39 +11,50 @@ const TalentCard = memo(function TalentCard({
 }: {
   talent: {
     name: string;
-    logo: string;
-    image: string;
-    link: string;
-    nameParts: { firstLine: string; secondLine: string };
+    logo?: string;
+    image?: string;
+    link?: string;
+    nameParts: { firstLine: string; secondLine?: string };
   };
   index: number;
 }) {
+  /**
+   * Renderizado para talentos con imágenes
+   */
   return (
     <Link
-      href={talent.link}
-      className="relative group motion-lift"
+      href={talent.link || "#"}
+      className="relative group motion-lift overflow-visible"
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Imagen del talento con logo dentro */}
-      <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4">
-        <Image
-          src={talent.image}
-          alt={talent.name}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover transition-opacity group-hover:opacity-90"
-        />
+      <div className="relative w-[120%] md:w-[130%] lg:w-[140%] left-1/2 -translate-x-1/2 aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-black">
+        {talent.image ? (
+          <Image
+            src={talent.image}
+            alt={talent.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-contain transition-opacity group-hover:opacity-90"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+            <p className="text-gray-500">Imagen pendiente</p>
+          </div>
+        )}
         
         {/* Logo del talento dentro de la imagen, más grande y más abajo, encima del texto */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-          <Image
-            src={talent.logo}
-            alt={`${talent.name} logo`}
-            width={350}
-            height={140}
-            className="h-28 md:h-36 lg:h-44 w-auto object-contain drop-shadow-lg"
-          />
-        </div>
+        {talent.logo && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+            <Image
+              src={talent.logo}
+              alt={`${talent.name} logo`}
+              width={350}
+              height={140}
+              className="h-28 md:h-36 lg:h-44 w-auto object-contain drop-shadow-lg"
+            />
+          </div>
+        )}
       </div>
 
       {/* Nombre en dos líneas, más grande */}
@@ -114,6 +125,15 @@ export default function Talents() {
           secondLine: "del Humor",
         },
       },
+      {
+        name: "Junior Aporta",
+        logo: "/img/showmarketing/junior logo.png",
+        image: "/img/showmarketing/Img 3.png",
+        link: "#",
+        nameParts: {
+          firstLine: "Junior Aporta",
+        },
+      },
     ],
     []
   );
@@ -136,9 +156,9 @@ export default function Talents() {
         </h2>
 
         {/* Grid de Talentos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-7xl mx-auto items-start">
           {talents.map((talent, index) => (
-            <TalentCard key={talent.link} talent={talent} index={index} />
+            <TalentCard key={talent.link || `talent-${index}`} talent={talent} index={index} />
           ))}
         </div>
       </div>
