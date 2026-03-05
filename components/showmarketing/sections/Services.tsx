@@ -29,7 +29,7 @@ const ServiceItem = memo(function ServiceItem({
           className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain filter brightness-0 invert"
         />
       </div>
-      <p className="font-helvetica text-white text-center text-sm md:text-base leading-tight">
+      <p className="font-helvetica text-white text-center text-base md:text-lg lg:text-xl leading-tight">
         {typeof service.displayText === "string" ? (
           service.displayText
         ) : (

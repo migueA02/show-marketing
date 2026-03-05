@@ -99,7 +99,7 @@ export default function AboutMerrySection() {
           </h2>
 
           {/* Subtítulo con tracking y word-spacing para calibrar ancho visual */}
-          <p className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold uppercase tracking-[-0.06em] sm:tracking-[-0.065em] md:tracking-[-0.07em] lg:tracking-[0.06em] xl:tracking-[0.1em] leading-tight mb-6 sm:mb-8 md:mb-10 lg:mb-12 text-center" style={{ fontFamily: "colfax, sans-serif", fontWeight: 600, wordSpacing: "clamp(0.3em, 1vw + 0.3em, 1.2em)" }}>
+          <p className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold uppercase tracking-tight sm:tracking-tight md:tracking-tight lg:tracking-tight xl:tracking-tight leading-tight mb-6 sm:mb-8 md:mb-10 lg:mb-12 text-center -mx-4 md:-mx-8 lg:-mx-12" style={{ fontFamily: "colfax, sans-serif", fontWeight: 600, letterSpacing: "-0.02em", wordSpacing: "0.1em" }}>
             LA GRAN INGENIERA DEL HOGAR
           </p>
         </div>
