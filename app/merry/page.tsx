@@ -52,7 +52,7 @@ const personSchema = {
   sameAs: [
     "https://www.instagram.com/merry_oficial",
     "https://www.tiktok.com/@merry_oficialcr",
-    "https://www.youtube.com/c/MisaelRam%C3%ADrezElSemental",
+    "https://www.youtube.com/@merry_oficialcr",
     "https://www.facebook.com/FansdeMerry",
   ],
   contactPoint: {

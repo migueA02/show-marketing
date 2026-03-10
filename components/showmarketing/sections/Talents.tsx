@@ -18,15 +18,10 @@ const TalentCard = memo(function TalentCard({
   };
   index: number;
 }) {
-  /**
-   * Renderizado para talentos con imágenes
-   */
-  return (
-    <Link
-      href={talent.link || "#"}
-      className="relative group motion-lift overflow-visible"
-      style={{ animationDelay: `${index * 100}ms` }}
-    >
+  const hasValidLink = talent.link && talent.link !== "#";
+  
+  const content = (
+    <>
       {/* Imagen del talento con logo dentro */}
       <div className="relative w-[120%] md:w-[130%] lg:w-[140%] left-1/2 -translate-x-1/2 aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-black">
         {talent.image ? (
@@ -35,7 +30,7 @@ const TalentCard = memo(function TalentCard({
             alt={talent.name}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-contain transition-opacity group-hover:opacity-90"
+            className={`object-contain transition-opacity ${hasValidLink ? 'group-hover:opacity-90' : ''}`}
           />
         ) : (
           <div className="w-full h-full bg-gray-800 flex items-center justify-center">
@@ -62,7 +57,31 @@ const TalentCard = memo(function TalentCard({
         <span className="block">{talent.nameParts.firstLine}</span>
         {talent.nameParts.secondLine && <span className="block">{talent.nameParts.secondLine}</span>}
       </h3>
-    </Link>
+    </>
+  );
+
+  /**
+   * Renderizado para talentos con imágenes
+   */
+  if (hasValidLink) {
+    return (
+      <Link
+        href={talent.link!}
+        className="relative group motion-lift overflow-visible cursor-pointer"
+        style={{ animationDelay: `${index * 100}ms` }}
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div
+      className="relative motion-lift overflow-visible"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      {content}
+    </div>
   );
 });
 

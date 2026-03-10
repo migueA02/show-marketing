@@ -41,9 +41,17 @@ export default function MediaCarousel() {
 
   /**
    * Convierte URL de YouTube a formato embed
+   * Maneja videos normales, youtu.be y shorts
    */
   const getYouTubeEmbedUrl = (url: string): string => {
-    const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^?&\s]+)/)?.[1];
+    // Extrae el ID del video de diferentes formatos de YouTube
+    let videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s?]+)/)?.[1];
+    
+    // Si no encuentra el ID, intenta con formato shorts
+    if (!videoId) {
+      videoId = url.match(/youtube\.com\/shorts\/([^&\s?]+)/)?.[1];
+    }
+    
     return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
   };
 
@@ -63,6 +71,13 @@ export default function MediaCarousel() {
         url: "https://www.youtube.com/watch?v=LPNZvd3us7s&t", 
         type: "youtube", 
         title: "Jorge Lozano",
+        format: "horizontal"
+      },
+      { 
+        id: 2, 
+        url: "https://youtu.be/fQpNLEu5CSk", 
+        type: "youtube", 
+        title: "PURDY",
         format: "horizontal"
       }
     ],

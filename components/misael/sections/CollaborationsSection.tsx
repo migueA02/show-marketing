@@ -2,41 +2,32 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-// Declaración de tipos para Instagram embeds
-declare global {
-  interface Window {
-    instgrm?: {
-      Embeds: {
-        process: () => void;
-      };
-    };
-  }
-}
-
 export default function CollaborationsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Videos de colaboraciones de Misael Ramírez
-   * Incluye YouTube, Facebook e Instagram
+   * Todos los videos ahora en YouTube
    * format: "vertical" para reels/shorts, "horizontal" para videos normales
    */
   const videos = [
-    { id: 1, url: "https://www.facebook.com/ToyotaCostaRica/videos/1625744321092517/", type: "facebook", title: "Toyota Costa Rica", format: "horizontal" },
-    { id: 2, url: "https://www.youtube.com/watch?v=AVcdHEK1Pa8", type: "youtube", title: "QU", format: "horizontal" },
+    { id: 1, url: "https://youtu.be/fESh4_OCAVM", type: "youtube", title: "PURDY", format: "horizontal" },
+    { id: 2, url: "https://youtu.be/wU1YEvQXkpY", type: "youtube", title: "QU", format: "horizontal" },
     { id: 3, url: "https://www.youtube.com/watch?v=LPNZvd3us7s", type: "youtube", title: "Jorge Lozano", format: "horizontal" },
-    { id: 4, url: "https://www.youtube.com/watch?v=NOXUIF4AjxI", type: "youtube", title: "TRAA Repuestos", format: "horizontal" },
+    { id: 4, url: "https://youtu.be/xqIP9_mfJZM", type: "youtube", title: "TRAA Repuestos", format: "horizontal" },
     { id: 5, url: "https://www.youtube.com/watch?v=Wq6uX4odnEU", type: "youtube", title: "Bomberos", format: "horizontal" },
-    { id: 6, url: "https://www.facebook.com/GolloCR/videos/misael-ram%C3%ADrez-les-va-a-contar-porque-el-celular-caterpillar-es-el-semental-de-l/282745675653086/?locale=es_LA", type: "facebook", title: "CAT", format: "horizontal" },
-    { id: 7, url: "https://www.instagram.com/p/DDCsLT7RpxU/", type: "instagram", title: "MaxiPali", format: "vertical" },
-    { id: 8, url: "https://www.instagram.com/p/DCj-5HkCmnT/", type: "instagram", title: "MAXUS", format: "vertical" },
-    { id: 9, url: "https://www.instagram.com/p/DBjjkAKRkap/", type: "instagram", title: "INTRADE", format: "vertical" },
-    { id: 10, url: "https://www.instagram.com/p/C_8ZsWyB1L-/", type: "instagram", title: "MONGE", format: "vertical" },
-    { id: 11, url: "https://www.instagram.com/reel/DCrmGSQhx7y/", type: "instagram", title: "Tequila Jarana", format: "vertical" },
-    { id: 12, url: "https://www.facebook.com/reel/312179268287737", type: "facebook", title: "Economy Rent a Car", format: "vertical" },
+    { id: 6, url: "https://youtu.be/y-IpAUbpixA", type: "youtube", title: "CAT", format: "horizontal" },
+    { id: 7, url: "https://youtu.be/mosDlizl_VQ", type: "youtube", title: "Monge", format: "horizontal" },
+    { id: 8, url: "https://youtube.com/shorts/NRZDQ9eQuUY", type: "youtube", title: "MaxiPali", format: "vertical" },
+    { id: 9, url: "https://youtube.com/shorts/CK6ZxFTxff4", type: "youtube", title: "MAXUS", format: "vertical" },
+    { id: 10, url: "https://youtube.com/shorts/e3ilF_ZwGYY", type: "youtube", title: "INTRADE", format: "vertical" },
+    { id: 11, url: "https://youtube.com/shorts/tq7-aW0O_bk", type: "youtube", title: "Tequila Jarana", format: "vertical" },
+    { id: 12, url: "https://youtube.com/shorts/j9SigHSwLZE", type: "youtube", title: "Economy Rent a Car", format: "vertical" },
   ];
 
   useEffect(() => {
@@ -53,54 +44,28 @@ export default function CollaborationsSection() {
     };
   }, []);
 
-  /**
-   * Cargar script de Instagram embeds para videos de Instagram
-   */
-  useEffect(() => {
-    const instagramVideos = videos.filter((v) => v.type === "instagram");
-    if (instagramVideos.length === 0) return;
-
-    let script: HTMLScriptElement | null = document.querySelector('script[src="//www.instagram.com/embed.js"]');
-    
-    if (!script) {
-      script = document.createElement('script');
-      script.src = '//www.instagram.com/embed.js';
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-    }
-
-    const processEmbeds = () => {
-      if (window.instgrm) {
-        window.instgrm.Embeds.process();
-      } else {
-        setTimeout(processEmbeds, 100);
-      }
-    };
-
-    if (script) {
-      if (window.instgrm) {
-        processEmbeds();
-      } else {
-        script.onload = processEmbeds;
-      }
-    }
-
-    const timeoutId = setTimeout(processEmbeds, 500);
-    return () => clearTimeout(timeoutId);
-  }, []);
-
   const goToSlide = (index: number) => {
+    if (!carouselRef.current || isScrollingRef.current) return;
+    
+    isScrollingRef.current = true;
     setCurrentSlide(index);
-    if (!carouselRef.current) return;
-    const slides = carouselRef.current.children;
-    if (slides[index]) {
-      const slide = slides[index] as HTMLElement;
-      carouselRef.current.scrollTo({
-        left: slide.offsetLeft,
+    
+    const carousel = carouselRef.current;
+    const slide = carousel.children[index] as HTMLElement;
+    
+    if (slide) {
+      const scrollLeft = slide.offsetLeft - (carousel.offsetWidth - slide.offsetWidth) / 2;
+      carousel.scrollTo({
+        left: Math.max(0, scrollLeft),
         behavior: "smooth",
       });
     }
+
+    // Reset scrolling flag after animation
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 600);
   };
 
   /**
@@ -120,17 +85,29 @@ export default function CollaborationsSection() {
   };
 
   const handleScroll = () => {
-    if (!carouselRef.current) return;
-    const scrollLeft = carouselRef.current.scrollLeft;
-    const slides = carouselRef.current.children;
-    let newSlide = 0;
+    if (!carouselRef.current || isScrollingRef.current) return;
+    
+    const carousel = carouselRef.current;
+    const scrollLeft = carousel.scrollLeft;
+    const carouselCenter = scrollLeft + carousel.offsetWidth / 2;
+    
+    let closestIndex = 0;
+    let closestDistance = Infinity;
 
-    for (let i = 0; i < slides.length; i++) {
-      const slide = slides[i] as HTMLElement;
-      if (scrollLeft >= slide.offsetLeft - slide.offsetWidth / 2) newSlide = i;
+    for (let i = 0; i < videos.length; i++) {
+      const slide = carousel.children[i] as HTMLElement;
+      const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
+      const distance = Math.abs(carouselCenter - slideCenter);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = i;
+      }
     }
 
-    setCurrentSlide(newSlide);
+    if (closestIndex !== currentSlide) {
+      setCurrentSlide(closestIndex);
+    }
   };
 
   return (
@@ -153,36 +130,28 @@ export default function CollaborationsSection() {
           <div
             ref={carouselRef}
             onScroll={handleScroll}
-            className="flex gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide cursor-grab active:cursor-grabbing"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            className="flex gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
+            style={{ 
+              scrollbarWidth: "none", 
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch"
+            }}
           >
             {videos.map((video) => {
               /**
                * Convierte URL de YouTube a formato embed
+               * Maneja videos normales, youtu.be y shorts
                */
               const getYouTubeEmbedUrl = (url: string): string => {
-                const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)?.[1];
-                return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-              };
-
-              /**
-               * Convierte URL de Facebook a formato embed
-               */
-              const getFacebookEmbedUrl = (url: string): string => {
-                const encodedUrl = encodeURIComponent(url);
-                return `https://www.facebook.com/plugins/video.php?href=${encodedUrl}&show_text=false&width=476`;
-              };
-
-              /**
-               * Determina el src del iframe según el tipo de video
-               */
-              const getEmbedSrc = (): string => {
-                if (video.type === "youtube") {
-                  return getYouTubeEmbedUrl(video.url);
-                } else if (video.type === "facebook") {
-                  return getFacebookEmbedUrl(video.url);
+                // Extrae el ID del video de diferentes formatos de YouTube
+                let videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s?]+)/)?.[1];
+                
+                // Si no encuentra el ID, intenta con formato shorts
+                if (!videoId) {
+                  videoId = url.match(/youtube\.com\/shorts\/([^&\s?]+)/)?.[1];
                 }
-                return video.url;
+                
+                return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
               };
 
               /**
@@ -201,34 +170,15 @@ export default function CollaborationsSection() {
               const frameClass = `${frameWidth} ${frameAspect}`;
 
               /**
-               * Para Instagram, usar el sistema de embeds de Instagram
-               */
-              if (video.type === "instagram") {
-                return (
-                  <div
-                    key={video.id}
-                    className={`flex-shrink-0 snap-center rounded-xl overflow-hidden bg-black/10 ${frameClass}`}
-                  >
-                    <blockquote
-                      className="instagram-media"
-                      data-instgrm-permalink={video.url}
-                      data-instgrm-version="14"
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  </div>
-                );
-              }
-
-              /**
-               * Para YouTube y Facebook, usar iframe
+               * Renderiza iframe de YouTube
                */
               return (
                 <div
                   key={video.id}
-                  className={`flex-shrink-0 snap-center rounded-xl overflow-hidden bg-black/10 ${frameClass}`}
+                  className={`flex-shrink-0 rounded-xl overflow-hidden bg-black/10 ${frameClass}`}
                 >
                   <iframe
-                    src={getEmbedSrc()}
+                    src={getYouTubeEmbedUrl(video.url)}
                     title={video.title || `Video ${video.id}`}
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

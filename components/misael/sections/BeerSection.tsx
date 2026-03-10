@@ -38,7 +38,7 @@ const BeerSection = () => {
 
       <iframe
         height="450"
-        src="https://www.youtube.com/embed/PWlqcNWSqwA?si=hIwk06MjsZCCxYog"
+        src="https://www.youtube-nocookie.com/embed/PWlqcNWSqwA?rel=0&modestbranding=1&playsinline=1"
         title="YouTube video player - Cerveza de Misael"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         className="w-full max-w-300"
