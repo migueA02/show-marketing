@@ -288,7 +288,7 @@ export default function ContactSection() {
           <div className="flex justify-center w-full">
             <ReCAPTCHA
               ref={recaptchaRef}
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6Lc5_4ksAAAAAOOPq5UVYpPa7ns7ua7J_Om_6fkQ"}
               onChange={handleCaptchaChange}
             />
           </div>
