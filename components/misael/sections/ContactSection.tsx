@@ -3,24 +3,16 @@
 import React, { useEffect, useRef, useState, FormEvent } from "react";
 import Image from "next/image";
 import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
+import ReCAPTCHA from "react-google-recaptcha"; // <-- Importamos ReCAPTCHA
 
-/**
- * ContactSection Component
- *
- * Sección de contacto con formulario.
- *
- * Características:
- * - Fondo marrón #854319
- * - Título en blanco
- * - Formulario con inputs blancos
- * - Botón blanco con texto marrón
- * - Iconos de redes sociales al final
- * - Animación smooth al entrar
- */
 export default function ContactSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   
+  // Referencia para resetear el reCAPTCHA
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
   // Estados del formulario
   const [formData, setFormData] = useState({
     nombre: "",
@@ -70,6 +62,13 @@ export default function ContactSection() {
     }
   };
 
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    if (submitMessage.type) {
+      setSubmitMessage({ type: null, text: "" });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitMessage({ type: null, text: "" });
@@ -83,6 +82,15 @@ export default function ContactSection() {
       return;
     }
 
+    // Validación de reCAPTCHA
+    if (!captchaToken) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor, verifica que no eres un robot.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -91,7 +99,8 @@ export default function ContactSection() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formData, source: 'misael' }),
+        // Enviamos el token al backend también para validarlo allá
+        body: JSON.stringify({ ...formData, source: 'misael', captcha: captchaToken }), 
       });
 
       const data = await response.json();
@@ -109,11 +118,21 @@ export default function ContactSection() {
           telefono: "",
           mensaje: "",
         });
+        // Resetear reCAPTCHA después del éxito
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
+        setCaptchaToken(null);
       } else {
         setSubmitMessage({
           type: "error",
           text: data.error || "Error al enviar el mensaje. Por favor intente nuevamente.",
         });
+        // Opcional: Resetear también en caso de error de servidor
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
+        setCaptchaToken(null);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -134,7 +153,7 @@ export default function ContactSection() {
         }`}
       >
         {/* Título */}
-        <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase  text-center font-acumin">
+        <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase text-center font-acumin">
           CONTACTO
         </h2>
 
@@ -164,7 +183,7 @@ export default function ContactSection() {
             placeholder="Apellido"
             aria-label="Apellido"
             required
-            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-md  bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#f69d28] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#854319]"
+            className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-md bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#f69d28] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#854319]"
           />
 
           {/* Correo */}
@@ -205,6 +224,7 @@ export default function ContactSection() {
           {/* Información adicional */}
           <textarea
             name="mensaje"
+            required
             value={formData.mensaje}
             onChange={handleInputChange}
             placeholder="Información adicional:"
@@ -212,6 +232,15 @@ export default function ContactSection() {
             aria-label="Información adicional o mensaje"
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-md bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#f69d28] text-gray-800 resize-none text-sm md:text-base lg:text-lg placeholder:text-[#854319]"
           />
+
+          {/* reCAPTCHA Component */}
+          <div className="flex justify-center w-full">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+              onChange={handleCaptchaChange}
+            />
+          </div>
 
           {/* Mensajes de éxito/error */}
           {submitMessage.type && (

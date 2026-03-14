@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@types/nodemailer": "^7.0.4",
-    "@types/react-google-recaptcha": "^2.1.9",
     "next": "16.1.1",
     "nodemailer": "^7.0.12",
     "react": "19.2.3",
@@ -24,6 +23,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-google-recaptcha": "^2.1.9",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "tailwindcss": "^4",

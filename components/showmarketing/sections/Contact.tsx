@@ -2,12 +2,17 @@
 
 import { useEffect, useRef, useState, FormEvent } from "react";
 import Image from "next/image";
+import ReCAPTCHA from "react-google-recaptcha"; // <-- Imported ReCAPTCHA
 
 export default function Contact() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   
+  // ReCAPTCHA reference and state
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
   // Estados del formulario
   const [formData, setFormData] = useState({
     nombre: "",
@@ -67,6 +72,13 @@ export default function Contact() {
     }
   };
 
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    if (submitMessage.type) {
+      setSubmitMessage({ type: null, text: "" });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitMessage({ type: null, text: "" });
@@ -80,6 +92,15 @@ export default function Contact() {
       return;
     }
 
+    // Validación de reCAPTCHA
+    if (!captchaToken) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor, verifica que no eres un robot.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -88,7 +109,7 @@ export default function Contact() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formData, source: 'show-marketing' }),
+        body: JSON.stringify({ ...formData, source: 'show-marketing', captcha: captchaToken }), // <-- Added captcha token
       });
 
       const data = await response.json();
@@ -106,11 +127,21 @@ export default function Contact() {
           telefono: "",
           mensaje: "",
         });
+        // Reset reCAPTCHA on success
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
+        setCaptchaToken(null);
       } else {
         setSubmitMessage({
           type: "error",
           text: data.error || "Error al enviar el mensaje. Por favor intente nuevamente.",
         });
+        // Reset reCAPTCHA on error
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
+        setCaptchaToken(null);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -215,6 +246,16 @@ export default function Contact() {
             rows={4}
             className="w-full px-4 py-3 md:px-5 md:py-4 rounded-lg bg-white border border-black/20 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-black text-sm md:text-base placeholder:text-black/50 font-helvetica resize-none transition-all duration-200"
           />
+
+          {/* reCAPTCHA Component */}
+          <div className="flex justify-center w-full">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+              onChange={handleCaptchaChange}
+              theme="dark" // Added dark theme to match the black background
+            />
+          </div>
 
           {/* Mensajes de éxito/error */}
           {submitMessage.type && (
