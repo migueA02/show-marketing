@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, FormEvent } from "react";
 import Image from "next/image";
+import ReCAPTCHA from "react-google-recaptcha"; // <-- Imported ReCAPTCHA
 
 /**
  * ContactSection Component
@@ -21,8 +22,8 @@ import Image from "next/image";
  * - Apellido (text input) - complemento de identificación
  * - Correo (email input) - validación HTML5 type="email"
  * - Teléfono (tel input) - con imagen bandera Costa Rica (#67c7db) precediendo
- *   → Padding-left: pl-12 para acomodar imagen (w-6/h-6)
- *   → Image estilo Costa Rica.png con height: auto
+ * → Padding-left: pl-12 para acomodar imagen (w-6/h-6)
+ * → Image estilo Costa Rica.png con height: auto
  * - Información adicional (textarea, 4 rows) - comentarios generales
  *
  * Responsive:
@@ -52,6 +53,10 @@ export default function ContactSection() {
    */
   const sectionRef = useRef<HTMLElement>(null);
   
+  // ReCAPTCHA reference and state
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
   // Estados del formulario
   const [formData, setFormData] = useState({
     nombre: "",
@@ -102,6 +107,13 @@ export default function ContactSection() {
     }
   };
 
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    if (submitMessage.type) {
+      setSubmitMessage({ type: null, text: "" });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitMessage({ type: null, text: "" });
@@ -115,6 +127,15 @@ export default function ContactSection() {
       return;
     }
 
+    // Validación de reCAPTCHA
+    if (!captchaToken) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor, verifica que no eres un robot.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -123,7 +144,7 @@ export default function ContactSection() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formData, source: 'merry' }),
+        body: JSON.stringify({ ...formData, source: 'merry', captcha: captchaToken }), // <-- Added captcha token
       });
 
       const data = await response.json();
@@ -141,11 +162,21 @@ export default function ContactSection() {
           telefono: "",
           mensaje: "",
         });
+        // Reset reCAPTCHA on success
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
+        setCaptchaToken(null);
       } else {
         setSubmitMessage({
           type: "error",
           text: data.error || "Error al enviar el mensaje. Por favor intente nuevamente.",
         });
+        // Reset reCAPTCHA on error
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
+        setCaptchaToken(null);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -157,7 +188,6 @@ export default function ContactSection() {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <section
@@ -254,6 +284,15 @@ export default function ContactSection() {
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 resize-none text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
 
+          {/* reCATCHA Component */}
+          <div className="flex justify-center w-full">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+              onChange={handleCaptchaChange}
+            />
+          </div>
+
           {/* Mensajes de éxito/error */}
           {submitMessage.type && (
             <div
@@ -296,4 +335,3 @@ export default function ContactSection() {
     </section>
   );
 }
-
