@@ -129,7 +129,7 @@ export default function EventSection() {
           className="bg-white text-[#7e1ad2] px-10 sm:px-14 md:px-18 lg:px-22 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold md:text-lg lg:text-xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3 pulse-cta"
         >
           <Image
-            src="/img/merry/whatsapp.png"
+            src="/img/merry/Whatsapp.png"
             alt="WhatsApp"
             width={60}
             height={60}
@@ -137,7 +137,7 @@ export default function EventSection() {
           />
           <span style={{ fontFamily: "Colfax, sans-serif" }}>+506 8305 4444</span>
           <Image
-            src="/img/merry/flecha morado.png"
+            src="/img/merry/Flecha morado.png"
             alt="Flechas"
             width={40}
             height={40}

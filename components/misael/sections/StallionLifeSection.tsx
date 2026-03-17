@@ -60,8 +60,8 @@ export default function SallionLifeSection() {
             <Image
               src="/img/merry/Flecha.png"
               alt="Flecha"
-              width={28}
-              height={28}
+              width={40}
+              height={40}
               className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
             />
           </button>

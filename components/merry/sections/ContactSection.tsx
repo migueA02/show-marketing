@@ -321,7 +321,7 @@ export default function ContactSection() {
               <span>{isSubmitting ? "ENVIANDO..." : "ENVIAR"}</span>
               {!isSubmitting && (
                 <Image
-                  src="/img/merry/flecha.png"
+                  src="/img/merry/Flecha.png"
                   alt="Flechas"
                   width={40}
                   height={40}
