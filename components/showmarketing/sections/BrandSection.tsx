@@ -41,7 +41,7 @@ export default function BrandSection() {
         {/* Logo ShowMarketing */}
         <div className="mb-8 md:mb-10">
           <Image
-            src="/img/showmarketing/logo-showmarketing-white.png"
+            src="/img/showmarketing/show_white.png"
             alt="ShowMarketing Producciones"
             width={400}
             height={200}

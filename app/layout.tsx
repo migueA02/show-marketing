@@ -30,7 +30,7 @@ export default function RootLayout({
     "@type": "Organization",
     "name": "ShowMarketing",
     "url": "https://showmarketing.cr",
-    "logo": "https://showmarketing.cr/img/merry/Logo SM_Mesa de trabajo 1.png",
+    "logo": "https://showmarketing.cr/img/showmarketing/show_white.png",
     "sameAs": [
       "https://www.instagram.com/merry_oficial",
       "https://www.tiktok.com/@merry_oficialcr",

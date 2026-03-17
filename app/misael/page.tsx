@@ -53,7 +53,7 @@ export const personSchema = {
   alternateName: ["El Semental del Humor", "El Semental"],
   description:
     "Comediante y creador de contenido costarricense, reconocido por su estilo de humor popular y viral como El Semental del Humor.",
-  image: "https://showmarketing.cr/img/misael/misael-1.png",
+  image: "https://showmarketing.cr/img/misael/banner1.png",
   url: "https://showmarketing.cr/misael",
   nationality: "Costa Rica",
   knowsLanguage: "es",
