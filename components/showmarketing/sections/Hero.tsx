@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="relative w-full bg-black py-16 md:py-24 pb-28 md:pb-36 overflow-hidden">
+    <section className="relative w-full bg-black pt-40 py-16 pb-28 md:pt-0 md:py-24 md:pb-36 overflow-hidden">
       {/* Gradiente radial izquierdo - NO cortado */}
       <div
         className="absolute left-0 top-1/2 -translate-y-1/2 w-[1100px] h-[1100px] pointer-events-none opacity-70"

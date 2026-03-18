@@ -169,8 +169,8 @@ export default function StickersSection() {
           <Image
             src="/img/merry/Flecha.png"
             alt="Flechas"
-            width={24}
-            height={24}
+            width={32}
+            height={32}
             className="w-5 h-5 sm:w-6 sm:h-6 object-contain"
           />
         </button>

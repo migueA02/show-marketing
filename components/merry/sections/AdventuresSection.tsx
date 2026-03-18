@@ -130,8 +130,8 @@ export default function AdventuresSection() {
           <Image
             src="/img/merry/Flecha.png"
             alt="Flechas"
-            width={24}
-            height={24}
+            width={32}
+            height={32}
             className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 object-contain"
           />
         </button>
