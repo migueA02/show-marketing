@@ -45,7 +45,7 @@ const BandSection = () => {
 
           <div className="relative w-full h-[400px] overflow-hidden">
             <Image
-              src="/img/misael/banda.png"
+              src="/img/misael/Banda.png"
               alt="Banda"
               fill
               className="object-cover"

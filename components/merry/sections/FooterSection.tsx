@@ -48,7 +48,7 @@ export default function FooterSection() {
    * Configuración estática de iconos sociales; sustituir rutas si se actualiza branding.
    */
   const socialIcons = [
-    { name: "WhatsApp", image: "/img/merry/Whatsapp 2.png", url: "https://wa.me/50683054444" },
+    { name: "WhatsApp", image: "/img/merry/whatsapp_2.png", url: "https://wa.me/50683054444" },
     { name: "Facebook", image: "/img/merry/Facebook 2.png", url: "https://www.facebook.com/FansdeMerry/?locale=es_LA" },
     { name: "YouTube", image: "/img/merry/Youtube 2.png", url: "https://www.youtube.com/@merry_oficialcr" },
     { name: "Instagram", image: "/img/merry/Instagram 2.png", url: "https://www.instagram.com/merry_oficial/" },

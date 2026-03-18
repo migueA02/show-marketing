@@ -167,7 +167,7 @@ export default function StickersSection() {
           
           <span>DESCARGAR AQUÍ</span>
           <Image
-            src="/img/merry/flecha.png"
+            src="/img/merry/Flecha.png"
             alt="Flechas"
             width={24}
             height={24}

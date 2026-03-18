@@ -128,7 +128,7 @@ export default function AdventuresSection() {
         >
           <span>@merryoficial</span>
           <Image
-            src="/img/merry/flecha.png"
+            src="/img/merry/Flecha.png"
             alt="Flechas"
             width={24}
             height={24}
