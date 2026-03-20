@@ -27,24 +27,28 @@ export default function SocialStatsSection() {
       icon: (
         <FaFacebookF className="text-[#492a10] w-12 h-12 lg:w-16 lg:h-16" />
       ),
-      followers: "5.5m",
+      followers: "204K",
+      url: "https://www.facebook.com/sementalcr",
     },
     {
       name: "YouTube",
       icon: <FaYoutube className="text-[#492a10] w-12 h-12 lg:w-16 lg:h-16" />,
-      followers: "5.5m",
+      followers: "24.7K",
+      url: "https://www.youtube.com/@MisaelRam%C3%ADrezElSemental",
     },
     {
       name: "Instagram",
       icon: (
         <FaInstagram className="text-[#492a10] w-12 h-12 lg:w-16 lg:h-16" />
       ),
-      followers: "5.5m",
+      followers: "40.2K",
+      url: "https://www.instagram.com/misaelramirezcr/",
     },
     {
       name: "TikTok",
       icon: <FaTiktok className="text-[#492a10] w-12 h-12 lg:w-16 lg:h-16" />,
-      followers: "5.5m",
+      followers: "121K",
+      url: "https://www.tiktok.com/@misaelramirezcr",
     },
   ];
 
@@ -61,8 +65,12 @@ export default function SocialStatsSection() {
           }`}
         >
           {socialPlatforms.map((platform, index) => (
-            <div
+            <a
               key={platform.name}
+              href={platform.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visitar ${platform.name} de Misael`}
               className="flex flex-col items-center justify-center text-center gap-2 flex-1"
               style={{ animationDelay: `${index * 100}ms` }}
             >
@@ -73,7 +81,7 @@ export default function SocialStatsSection() {
               <span className="text-[#f69d28] text-3xl sm:text-2xl md:text-3xl lg:text-4xl font-black mb-1 md:mb-2 font-acumin">
                 {platform.followers}
               </span>
-            </div>
+            </a>
           ))}
         </div>
       </div>
