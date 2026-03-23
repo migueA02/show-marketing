@@ -169,7 +169,7 @@ export default function CollaborationsSection() {
 
               const frameClass = `${frameWidth} ${frameAspect}`;
 
-              /**
+              /*
                * Renderiza iframe de YouTube
                */
               return (
