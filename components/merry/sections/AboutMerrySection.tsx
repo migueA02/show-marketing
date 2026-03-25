@@ -107,8 +107,7 @@ export default function AboutMerrySection() {
         {/* CTA hacia biografía o landing externo */}
         <button
           onClick={() => {
-            // URL a cambiar por el usuario
-            window.open("#", "_blank");
+            window.open("https://www.instagram.com/merry_oficial/", "_blank");
           }}
           className="bg-[#7e1ad2] text-white px-10 sm:px-14 md:px-18 lg:px-22 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold text-sm sm:text-base md:text-lg uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-2 md:gap-3 pulse-cta"
           style={{ fontFamily: "Acumin Pro, sans-serif", fontWeight: 600 }}

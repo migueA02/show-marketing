@@ -46,7 +46,7 @@ const FIELD_LIMITS = {
   nombre: 100,
   apellido: 100,
   email: 255,
-  telefono: 20,
+  telefono: 40,
   mensaje: 2000,
 } as const;
 
@@ -198,7 +198,7 @@ function validateFormData(data: {
   mensaje?: string;
 }): { isValid: boolean; errorMessage?: string } {
   // Validación de campos requeridos
-  if (!data.nombre?.trim() || !data.apellido?.trim() || !data.email?.trim() || !data.telefono?.trim()) {
+  if (!data.nombre?.trim() || !data.email?.trim() || !data.telefono?.trim()) {
     return { isValid: false, errorMessage: 'Por favor complete todos los campos requeridos' };
   }
 
@@ -227,7 +227,7 @@ function validateFormData(data: {
     return { isValid: false, errorMessage: `El nombre no puede exceder ${FIELD_LIMITS.nombre} caracteres` };
   }
   if (data.apellido.length > FIELD_LIMITS.apellido) {
-    return { isValid: false, errorMessage: `El apellido no puede exceder ${FIELD_LIMITS.apellido} caracteres` };
+    return { isValid: false, errorMessage: `La empresa no puede exceder ${FIELD_LIMITS.apellido} caracteres` };
   }
   if (data.email.length > FIELD_LIMITS.email) {
     return { isValid: false, errorMessage: `El email no puede exceder ${FIELD_LIMITS.email} caracteres` };
@@ -258,6 +258,7 @@ function generateEmailHTML(
   // Sanitizar todos los campos
   const safeNombre = escapeHtml(formData.nombre.trim());
   const safeApellido = escapeHtml(formData.apellido.trim());
+  const safeNombreCompleto = [safeNombre, safeApellido].filter(Boolean).join(' ');
   const safeEmail = escapeHtml(formData.email.trim());
   const safeTelefono = escapeHtml(formData.telefono.trim());
   const safeMensaje = formData.mensaje ? escapeHtml(formData.mensaje.trim()).replace(/\n/g, '<br>') : '';
@@ -318,7 +319,7 @@ function generateEmailHTML(
                         </td>
                         <td style="vertical-align: top;">
                           <p style="margin: 0; color: #333333; font-size: 14px;">
-                            ${safeNombre} ${safeApellido}
+                            ${safeNombreCompleto}
                           </p>
                         </td>
                       </tr>
@@ -422,6 +423,8 @@ function generateEmailText(
   formData: { nombre: string; apellido: string; email: string; telefono: string; mensaje?: string },
   formInfo: FormInfo
 ): string {
+  const fullName = [formData.nombre.trim(), formData.apellido.trim()].filter(Boolean).join(' ');
+
   return `
 NUEVO CONTACTO - Formulario de ${formInfo.displayName}
 
@@ -433,7 +436,7 @@ ${formInfo.displayName}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 NOMBRE
-${formData.nombre.trim()} ${formData.apellido.trim()}
+${fullName}
 
 EMAIL
 ${formData.email.trim()}
@@ -538,11 +541,13 @@ export async function POST(request: NextRequest) {
     // Datos validados y sanitizados
     const formData = {
       nombre: (nombre as string).trim(),
-      apellido: (apellido as string).trim(),
+      apellido: (apellido || '').trim(),
       email: (email as string).trim().toLowerCase(), // Normalizar email a lowercase
       telefono: (telefono as string).trim(),
       mensaje: mensaje?.trim() || '',
     };
+
+    const contactName = [formData.nombre, formData.apellido].filter(Boolean).join(' ');
 
     // ========================================================================
     // ENVÍO DE EMAIL (Resend API)
@@ -581,8 +586,8 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({
         from: 'ShowMarketing <onboarding@resend.dev>', // Dominio verificado de Resend
         to: CONTACT_EMAIL,
-        replyTo: `${formData.nombre} ${formData.apellido} <${formData.email}>`,
-        subject: `Nuevo contacto desde ${formInfo.displayName} - ${formData.nombre} ${formData.apellido}`,
+        replyTo: `${contactName} <${formData.email}>`,
+        subject: `Nuevo contacto desde ${formInfo.displayName} - ${contactName}`,
         html: emailHtml,
         text: emailText,
         headers: {
