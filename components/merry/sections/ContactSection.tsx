@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, FormEvent } from "react";
 import Image from "next/image";
 import ReCAPTCHA from "react-google-recaptcha"; // <-- Imported ReCAPTCHA
+import CountryPhoneInput from "../../common/CountryPhoneInput";
 
 /**
  * ContactSection Component
@@ -114,12 +115,19 @@ export default function ContactSection() {
     }
   };
 
+  const handlePhoneChange = (phone: string) => {
+    setFormData((prev) => ({ ...prev, telefono: phone }));
+    if (submitMessage.type) {
+      setSubmitMessage({ type: null, text: "" });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitMessage({ type: null, text: "" });
 
     // Validación básica
-    if (!formData.nombre || !formData.apellido || !formData.email || !formData.telefono) {
+    if (!formData.nombre || !formData.email || !formData.telefono) {
       setSubmitMessage({
         type: "error",
         text: "Por favor complete todos los campos requeridos",
@@ -219,8 +227,8 @@ export default function ContactSection() {
             name="nombre"
             value={formData.nombre}
             onChange={handleInputChange}
-            placeholder="Nombre"
-            aria-label="Nombre completo"
+            placeholder="Nombre y Apellido"
+            aria-label="Nombre y Apellido"
             required
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
@@ -231,9 +239,8 @@ export default function ContactSection() {
             name="apellido"
             value={formData.apellido}
             onChange={handleInputChange}
-            placeholder="Apellido"
-            aria-label="Apellido"
-            required
+            placeholder="Empresa (opcional)"
+            aria-label="Empresa (opcional)"
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
 
@@ -249,38 +256,26 @@ export default function ContactSection() {
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
 
-          {/* Teléfono con bandera de Costa Rica a la izquierda */}
-          <div className="relative">
-            <div className="absolute left-3 md:left-4 lg:left-5 top-1/2 -translate-y-1/2 z-10">
-              <Image
-                src="/img/merry/Costa Rica.png"
-                alt="Bandera de Costa Rica"
-                width={24}
-                height={18}
-                className="w-6 md:w-7 lg:w-8 object-contain"
-                style={{ height: 'auto' }}
-              />
-            </div>
-            <input
-              type="tel"
-              name="telefono"
-              value={formData.telefono}
-              onChange={handleInputChange}
-              placeholder="Número de teléfono"
-              aria-label="Número de teléfono de Costa Rica"
-              required
-              className="w-full pl-12 md:pl-14 lg:pl-16 pr-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
-            />
-          </div>
+          <CountryPhoneInput
+            value={formData.telefono}
+            onChange={handlePhoneChange}
+            placeholder="Número de teléfono"
+            required
+            countryAriaLabel="Seleccionar código de país"
+            phoneAriaLabel="Número de teléfono"
+            containerClassName="flex gap-2"
+            selectClassName="w-[40%] px-3 py-3 md:px-4 md:py-4 lg:px-5 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg font-bold"
+            inputClassName="flex-1 px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
+          />
 
-          {/* Información adicional */}
+          {/* Cuéntenos su idea */}
           <textarea
             name="mensaje"
             value={formData.mensaje}
             onChange={handleInputChange}
-            placeholder="Información adicional:"
+            placeholder="Cuéntenos su idea"
             rows={4}
-            aria-label="Información adicional o mensaje"
+            aria-label="Cuéntenos su idea"
             className="w-full px-4 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5 rounded-lg md:rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7e1ad2] text-gray-800 resize-none text-sm md:text-base lg:text-lg placeholder:text-[#7e1ad2] font-bold"
           />
 

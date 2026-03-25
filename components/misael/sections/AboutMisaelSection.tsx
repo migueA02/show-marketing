@@ -54,7 +54,7 @@ export default function AboutMisaelSection() {
         {/* Botón */}
         <button
           id="beer"
-          onClick={() => window.open("#", "_blank")}
+          onClick={() => window.open("https://www.instagram.com/misaelramirezcr/", "_blank")}
           className="bg-[#f69d28] text-white px-6 sm:px-8 motion-lift cursor-pointer md:px-10 lg:px-12 py-1  rounded-xl font-semibold text-md lg:text-xl xl:text-2xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3 xl:gap-4 font-acumin"
         >
           <span>¿QUIEN ES EL SEMENTAL?</span>

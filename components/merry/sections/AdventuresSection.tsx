@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { FaInstagram } from "react-icons/fa";
 
 /**
  * AdventuresSection Component
@@ -55,13 +56,13 @@ export default function AdventuresSection() {
   // URLs de imágenes de Instagram (puedes pegarlas aquí directamente desde Instagram)
   // Para obtener las URLs: Click derecho en la imagen de Instagram > "Copiar dirección de la imagen"
   // NOTA: Instagram puede bloquear hotlinking, si las imágenes no cargan, usa las imágenes estáticas locales
-  const instagramImageUrls = [
-    "/img/merry/Aventuras_1.png", // Reemplaza con URL de Instagram si deseas: "https://..."
-    "/img/merry/Aventuras_2.png",
-    "/img/merry/Aventuras_3.png",
-    "/img/merry/Aventuras_4.png",
-    "/img/merry/Aventuras_5.png",
-    "/img/merry/Aventuras_6.png",
+  const instagramPosts = [
+    { image: "/img/merry/Aventuras_1.png", url: "https://www.instagram.com/merry_oficial/" },
+    { image: "/img/merry/Aventuras_2.png", url: "https://www.instagram.com/merry_oficial/" },
+    { image: "/img/merry/Aventuras_3.png", url: "https://www.instagram.com/merry_oficial/" },
+    { image: "/img/merry/Aventuras_4.png", url: "https://www.instagram.com/merry_oficial/" },
+    { image: "/img/merry/Aventuras_5.png", url: "https://www.instagram.com/merry_oficial/" },
+    { image: "/img/merry/Aventuras_6.png", url: "https://www.instagram.com/merry_oficial/" },
   ];
 
   useEffect(() => {
@@ -126,7 +127,10 @@ export default function AdventuresSection() {
           }}
           className="bg-[#7e1ad2] text-white px-10 sm:px-14 md:px-18 lg:px-22 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold md:text-lg lg:text-xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3 mb-8 sm:mb-10 md:mb-12 lg:mb-14 pulse-cta"
         >
-          <span>@merryoficial</span>
+          <span className="inline-flex items-center gap-2">
+            <FaInstagram className="text-base md:text-lg" aria-hidden="true" />
+            <span>merryoficial</span>
+          </span>
           <Image
             src="/img/merry/Flecha.png"
             alt="Flechas"
@@ -138,21 +142,25 @@ export default function AdventuresSection() {
 
         {/* Grid de posts con imágenes de Instagram o locales */}
         <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-5 max-w-[900px] mx-auto">
-          {instagramImageUrls.map((imageSrc, index) => (
-            <div
+          {instagramPosts.map((post, index) => (
+            <a
               key={index}
-              className="aspect-square rounded-lg md:rounded-xl relative overflow-hidden"
+              href={post.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Ver post de Instagram ${index + 1} de Doña Merry`}
+              className="aspect-square rounded-lg md:rounded-xl relative overflow-hidden block hover:opacity-90 transition-opacity"
             >
               <Image
-                src={imageSrc}
+                src={post.image}
                 alt={`Doña Merry aventuras en redes sociales - Foto ${index + 1} de eventos y entretenimiento`}
                 width={400}
                 height={400}
                 className="w-full h-full object-cover"
                 loading="lazy"
-                unoptimized={imageSrc.startsWith('http')} // Desactivar optimización para URLs externas
+                unoptimized={post.image.startsWith('http')} // Desactivar optimización para URLs externas
               />
-            </div>
+            </a>
           ))}
         </div>
       </div>
