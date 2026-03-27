@@ -144,7 +144,7 @@ export default function CollaborationsSection() {
           <div
             ref={carouselRef}
             onScroll={handleScroll}
-            className="flex gap-3 sm:gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth snap-x snap-mandatory"
+            className="flex items-center gap-3 sm:gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth snap-x snap-mandatory"
             style={{ 
               scrollbarWidth: "none", 
               msOverflowStyle: "none",
