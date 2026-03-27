@@ -30,8 +30,12 @@ export default function Hero() {
           BIENVENIDOS
         </h1>
 
-        <p className="font-helvetica text-white text-base md:text-lg max-w-2xl mx-auto mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-          Representamos a una variedad de personajes únicos que cautivan al público con su talento y carisma.
+        <p
+          className="font-helvetica text-white text-base md:text-lg max-w-2xl mx-auto mb-8 md:mb-10 animate-fade-in-up"
+          style={{ animationDelay: "100ms" }}
+        >
+          Representamos a una variedad de personajes únicos que cautivan al
+          público con su talento y carisma.
         </p>
 
         <a
@@ -43,7 +47,10 @@ export default function Hero() {
         </a>
 
         {/* Logo + halo (gradiente) detrás */}
-        <div className="relative flex w-full justify-center items-center animate-fade-in-up" style={{ animationDelay: "300ms" }}>
+        <div
+          className="relative flex w-full justify-center items-center animate-fade-in-up"
+          style={{ animationDelay: "300ms" }}
+        >
           {/* Halo/Arco detrás del logo (VISIBLE y sin tocar Talentos) */}
           <div
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[35%] w-[520px] h-[300px] sm:w-[680px] sm:h-[380px] md:w-[760px] md:h-[430px] lg:w-[900px] lg:h-[520px] pointer-events-none opacity-70 z-0"

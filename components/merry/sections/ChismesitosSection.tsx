@@ -113,7 +113,7 @@ export default function ChismesitosSection() {
           >
             {/* Instagram */}
             <Image
-              src="/img/merry/instagram 2.png"
+              src="/img/merry/Instagram_2.png"
               alt="Instagram"
               width={28}
               height={28}

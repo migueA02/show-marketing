@@ -137,7 +137,7 @@ export default function EventSection() {
           />
           <span style={{ fontFamily: "Colfax, sans-serif" }}>+506 8305 4444</span>
           <Image
-            src="/img/merry/Flecha morado.png"
+            src="/img/merry/Flecha_morado.png"
             alt="Flechas"
             width={40}
             height={40}
