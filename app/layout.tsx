@@ -48,10 +48,47 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link rel="icon" href="/favicon.ico" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                function cleanBisAttrs(root) {
+                  try {
+                    if (!root || !root.querySelectorAll) return;
+                    root.querySelectorAll('[bis_skin_checked]').forEach(function (el) {
+                      el.removeAttribute('bis_skin_checked');
+                    });
+                    if (root.documentElement && root.documentElement.hasAttribute && root.documentElement.hasAttribute('bis_skin_checked')) {
+                      root.documentElement.removeAttribute('bis_skin_checked');
+                    }
+                  } catch (e) {}
+                }
+
+                cleanBisAttrs(document);
+
+                try {
+                  var observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (m) {
+                      if (m.type === 'attributes' && m.attributeName === 'bis_skin_checked' && m.target && m.target.removeAttribute) {
+                        m.target.removeAttribute('bis_skin_checked');
+                      }
+                    });
+                  });
+
+                  observer.observe(document.documentElement, {
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['bis_skin_checked'],
+                  });
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
