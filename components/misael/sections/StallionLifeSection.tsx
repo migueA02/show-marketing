@@ -52,7 +52,7 @@ export default function SallionLifeSection() {
 
           <button
             type="button"
-            onClick={() => window.open("#", "_blank")}
+            onClick={() => window.open("https://www.instagram.com/channel/AbabCTNcQ06cVf_L/?igsh=OWc1Z2IybDBqZjcw", "_blank")}
             className="w-full bg-[#854319] text-white py-1  md:py-2 rounded-xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-3 font-bold"
           >
             <FaInstagram className="w-6 h-6 sm:w-7 sm:h-7" />
