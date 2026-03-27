@@ -130,11 +130,15 @@ export default function CollaborationsSection() {
           <div
             ref={carouselRef}
             onScroll={handleScroll}
-            className="flex gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
+            className="flex gap-3 sm:gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth snap-x snap-mandatory"
             style={{ 
               scrollbarWidth: "none", 
               msOverflowStyle: "none",
-              WebkitOverflowScrolling: "touch"
+              WebkitOverflowScrolling: "touch",
+              paddingLeft: "max(1rem, env(safe-area-inset-left))",
+              paddingRight: "max(1rem, env(safe-area-inset-right))",
+              scrollPaddingLeft: "max(1rem, env(safe-area-inset-left))",
+              scrollPaddingRight: "max(1rem, env(safe-area-inset-right))"
             }}
           >
             {videos.map((video) => {
@@ -160,8 +164,8 @@ export default function CollaborationsSection() {
                * Ancho controlado por vw + min/max
                */
               const frameWidth = video.format === "vertical"
-                ? "w-[62vw] max-w-[280px] min-w-[220px] lg:max-w-[320px]"
-                : "w-[84vw] max-w-[420px] min-w-[320px] lg:max-w-[760px]";
+                ? "w-[58vw] min-w-[180px] max-w-[240px] sm:w-[50vw] sm:min-w-[210px] sm:max-w-[280px] lg:max-w-[320px]"
+                : "w-[82vw] min-w-[260px] max-w-[360px] sm:w-[78vw] sm:min-w-[300px] sm:max-w-[460px] lg:max-w-[760px]";
 
               const frameAspect = video.format === "vertical"
                 ? "aspect-[9/16]"
@@ -175,7 +179,7 @@ export default function CollaborationsSection() {
               return (
                 <div
                   key={video.id}
-                  className={`flex-shrink-0 rounded-xl overflow-hidden bg-black/10 ${frameClass}`}
+                  className={`flex-shrink-0 snap-center rounded-xl overflow-hidden bg-black/10 ${frameClass}`}
                 >
                   <iframe
                     src={getYouTubeEmbedUrl(video.url)}
