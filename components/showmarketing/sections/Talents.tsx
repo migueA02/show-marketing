@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo, memo, useCallback } from "react";
+import { useEffect, useRef, useState, useMemo, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,6 +14,7 @@ const TalentCard = memo(function TalentCard({
     logo?: string;
     image?: string;
     link?: string;
+    logoClassName?: string;
     nameParts: { firstLine: string; secondLine?: string };
   };
   index: number;
@@ -23,14 +24,14 @@ const TalentCard = memo(function TalentCard({
   const content = (
     <>
       {/* Imagen del talento con logo dentro */}
-      <div className="relative w-[120%] md:w-[130%] lg:w-[140%] left-1/2 -translate-x-1/2 aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-black">
+      <div className="relative w-full aspect-[5/8] rounded-2xl overflow-hidden mb-4 bg-black">
         {talent.image ? (
           <Image
             src={talent.image}
             alt={talent.name}
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className={`object-contain transition-opacity ${hasValidLink ? 'group-hover:opacity-90' : ''}`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            className={`object-cover transition-opacity ${hasValidLink ? 'group-hover:opacity-90' : ''}`}
           />
         ) : (
           <div className="w-full h-full bg-gray-800 flex items-center justify-center">
@@ -40,13 +41,13 @@ const TalentCard = memo(function TalentCard({
         
         {/* Logo del talento dentro de la imagen, más grande y más abajo, encima del texto */}
         {talent.logo && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 w-[82%] flex justify-center">
             <Image
               src={talent.logo}
               alt={`${talent.name} logo`}
               width={350}
               height={140}
-              className="h-28 md:h-36 lg:h-44 w-auto object-contain drop-shadow-lg"
+              className={talent.logoClassName || "h-20 md:h-24 lg:h-28 w-auto max-w-full object-contain drop-shadow-lg"}
             />
           </div>
         )}
@@ -67,7 +68,7 @@ const TalentCard = memo(function TalentCard({
     return (
       <Link
         href={talent.link!}
-        className="relative group motion-lift overflow-visible cursor-pointer"
+        className="relative group motion-lift cursor-pointer w-full max-w-[260px] md:max-w-[300px] mx-auto"
         style={{ animationDelay: `${index * 100}ms` }}
       >
         {content}
@@ -77,7 +78,7 @@ const TalentCard = memo(function TalentCard({
 
   return (
     <div
-      className="relative motion-lift overflow-visible"
+      className="relative motion-lift w-full max-w-[260px] md:max-w-[300px] mx-auto"
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {content}
@@ -148,9 +149,21 @@ export default function Talents() {
         name: "Junior Aporta",
         logo: "/img/showmarketing/junior logo.png",
         image: "/img/showmarketing/Img 3.png",
-        link: "#",
+        link: "https://wa.me/50683054444",
+        logoClassName: "h-16 md:h-20 lg:h-24 w-auto max-w-full object-contain drop-shadow-lg",
         nameParts: {
           firstLine: "Junior Aporta",
+        },
+      },
+      {
+        name: "Banda MR",
+        logo: "/img/showmarketing/Logo banda-new.png",
+        image: "/img/showmarketing/Banda MR img 4.png",
+        link: "https://www.instagram.com/misaelramirezcr/",
+        logoClassName: "h-16 md:h-20 lg:h-24 w-auto max-w-full object-contain drop-shadow-lg",
+        nameParts: {
+          firstLine: "Banda",
+          secondLine: "MR",
         },
       },
     ],
@@ -175,7 +188,7 @@ export default function Talents() {
         </h2>
 
         {/* Grid de Talentos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-7xl mx-auto items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-6 max-w-7xl mx-auto items-start">
           {talents.map((talent, index) => (
             <TalentCard key={talent.link || `talent-${index}`} talent={talent} index={index} />
           ))}

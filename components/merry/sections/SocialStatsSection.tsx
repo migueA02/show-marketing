@@ -70,10 +70,34 @@ export default function SocialStatsSection() {
    * Datos de plataformas y rutas de icono; sustituir para actualizar métricas.
    */
   const socialPlatforms = [
-    { name: "Facebook", icon: "FB", image: "/img/merry/Facebook.png" },
-    { name: "YouTube", icon: "YT", image: "/img/merry/Youtube.png" },
-    { name: "Instagram", icon: "IG", image: "/img/merry/Instagram.png" },
-    { name: "TikTok", icon: "TT", image: "/img/merry/Tik tok.png" },
+    {
+      name: "Facebook",
+      icon: "FB",
+      image: "/img/merry/Facebook.png",
+      followers: "260K",
+      url: "https://www.facebook.com/FansdeMerry",
+    },
+    {
+      name: "YouTube",
+      icon: "YT",
+      image: "/img/merry/Youtube.png",
+      followers: "1.33K",
+      url: "https://www.youtube.com/channel/UC89tfk3k74KtIeYX9Z1MpQQ",
+    },
+    {
+      name: "Instagram",
+      icon: "IG",
+      image: "/img/merry/Instagram.png",
+      followers: "14.6K",
+      url: "https://www.instagram.com/merry_oficial/",
+    },
+    {
+      name: "TikTok",
+      icon: "TT",
+      image: "/img/merry/Tik tok.png",
+      followers: "12.7K",
+      url: "https://www.tiktok.com/@merry_oficialcr",
+    },
   ];
 
   return (
@@ -89,8 +113,12 @@ export default function SocialStatsSection() {
           }`}
         >
           {socialPlatforms.map((platform, index) => (
-            <div
+            <a
               key={platform.name}
+              href={platform.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visitar ${platform.name} de Merry`}
               className="flex flex-col items-center justify-center text-center motion-lift"
               style={{ animationDelay: `${index * 100}ms` }}
             >
@@ -110,14 +138,14 @@ export default function SocialStatsSection() {
                 className="text-white text-base sm:text-lg md:text-2xl lg:text-3xl font-black mb-0 leading-none"
                 style={{ fontFamily: "Colfax, sans-serif" }}
               >
-                100K
+                {platform.followers}
               </span>
               
               {/* Texto seguidores */}
               <span className="text-white text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold uppercase tracking-tight leading-none" style={{ fontFamily: "Colfax, sans-serif" }}>
                 SEGUIDORES
               </span>
-            </div>
+            </a>
           ))}
         </div>
       </div>

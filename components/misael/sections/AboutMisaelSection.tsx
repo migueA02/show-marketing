@@ -6,6 +6,7 @@ import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 
 export default function AboutMisaelSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const [isBioOpen, setIsBioOpen] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -51,15 +52,40 @@ export default function AboutMisaelSection() {
           </h2>
         </div>
 
-        {/* Botón */}
+        {/* Botón acordeón */}
         <button
           id="beer"
-          onClick={() => window.open("#", "_blank")}
+          onClick={() => setIsBioOpen((prev) => !prev)}
+          aria-expanded={isBioOpen}
+          aria-controls="misael-bio-content"
           className="bg-[#f69d28] text-white px-6 sm:px-8 motion-lift cursor-pointer md:px-10 lg:px-12 py-1  rounded-xl font-semibold text-md lg:text-xl xl:text-2xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3 xl:gap-4 font-acumin"
         >
           <span>¿QUIEN ES EL SEMENTAL?</span>
-          <MdOutlineKeyboardDoubleArrowLeft className="text-[30px] lg:text-[36px] xl:text-[40px]" />
+          <MdOutlineKeyboardDoubleArrowLeft
+            className={`text-[30px] lg:text-[36px] xl:text-[40px] transition-transform duration-300 ${
+              isBioOpen ? "-rotate-90" : "rotate-0"
+            }`}
+          />
         </button>
+
+        <div
+          id="misael-bio-content"
+          className={`w-full max-w-[1000px] overflow-hidden transition-all duration-500 ease-in-out ${
+            isBioOpen ? "max-h-[720px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="bg-[#f69d28]/95 text-white rounded-xl md:rounded-2xl px-5 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 font-acumin">
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed">
+              Misael Ramírez se caracteriza por un humor sano, respetuoso y 100% familiar.
+            </p>
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed mt-3">
+              Su visión de la masculinidad está basada en el respeto, el buen juicio y la aceptación de las diferencias que existen en la sociedad. Desde ahí, construye con un tono irónico y humorístico el concepto del "semental", como una forma de reafirmar su identidad y expresar con orgullo su heterosexualidad.
+            </p>
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed mt-3">
+              A través de su humor criollo, Misael resalta el valor de ser auténtico. Mediante comparaciones coloquiales, logra simplificar la vida cotidiana de una manera cercana, en la que todos podemos identificarnos.
+            </p>
+          </div>
+        </div>
       </div>
       <div className="w-full h-[30px] bg-[#f69d28]"></div>
     </section>

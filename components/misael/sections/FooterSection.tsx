@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import {
   FaFacebookF,
   FaInstagram,
@@ -49,22 +48,27 @@ export default function FooterSection() {
     {
       name: "WhatsApp",
       image: <FaWhatsapp className="text-white w-8 h-8" />,
+      url: "https://wa.me/50683054444",
     },
     {
       name: "Facebook",
       image: <FaFacebookF className="text-white w-8 h-8" />,
+      url: "https://www.facebook.com/sementalcr",
     },
     {
       name: "YouTube",
       image: <FaYoutube className="text-white w-8 h-8" />,
+      url: "https://www.youtube.com/@MisaelRam%C3%ADrezElSemental",
     },
     {
       name: "Instagram",
       image: <FaInstagram className="text-white w-8 h-8" />,
+      url: "https://www.instagram.com/misaelramirezcr/",
     },
     {
       name: "TikTok",
       image: <FaTiktok className="text-white w-8 h-8" />,
+      url: "https://www.tiktok.com/@misaelramirezcr",
     },
   ];
 
@@ -79,13 +83,17 @@ export default function FooterSection() {
         }`}
       >
         {socialIcons.map((social, index) => (
-          <div
+          <a
             key={social.name}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Visitar ${social.name} de Misael`}
             className="  rounded-full  flex items-center justify-center transition-all cursor-pointer hover:scale-110"
             style={{ animationDelay: `${index * 50}ms` }}
           >
             {social?.image}
-          </div>
+          </a>
         ))}
       </div>
     </footer>

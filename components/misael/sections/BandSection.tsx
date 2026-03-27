@@ -35,21 +35,22 @@ const BandSection = () => {
               Un concepto de <br /> carnaval diferente
             </h2>
             <Image
-              src="/img/misael/bandaLogo.png"
+              src="/img/showmarketing/Logo banda-new.png"
               width={300}
               height={300}
               alt="Banda Logo"
-              className="block w-[300px] h-[300px]"
+              className="block w-[360px] sm:w-[420px] md:w-[460px] h-[300px] object-contain"
             />
           </div>
 
-          <div className="relative w-full h-[400px] overflow-hidden">
-            <Image
-              src="/img/misael/banda.png"
-              alt="Banda"
-              fill
-              className="object-cover"
-              priority
+          <div className="relative w-full h-[260px] sm:h-[320px] md:h-[380px] lg:h-[420px] overflow-hidden rounded-xl">
+            <iframe
+              src="https://www.youtube.com/embed/5nvZ62RhuMU"
+              title="Video Banda MR"
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
             />
           </div>
         </div>
@@ -92,7 +93,7 @@ const BandSection = () => {
         </div>
         <button
           id="social"
-          onClick={() => window.open("#", "_blank")}
+          onClick={() => window.open("https://wa.me/50683054444", "_blank")}
           className="bg-white text-[#854319] px-6 sm:px-8 md:px-10 lg:px-12 py-1  rounded-xl font-semibold text-md lg:text-xl xl:text-2xl uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 md:gap-3 xl:gap-4 n w-fit cursor-pointer motion-lift"
         >
           <FaWhatsapp className="text-[30px] lg:text-[36px] xl:text-[40px] " />

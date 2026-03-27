@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="relative w-full bg-black pt-40 py-16 pb-28 md:pt-0 md:py-24 md:pb-36 overflow-hidden">
+    <section className="relative w-full bg-black pt-40 pb-28 md:pt-44 md:pb-36 overflow-hidden">
       {/* Gradiente radial izquierdo - NO cortado */}
       <div
         className="absolute left-0 top-1/2 -translate-y-1/2 w-[1100px] h-[1100px] pointer-events-none opacity-70"
@@ -25,8 +25,8 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
-        <h1 className="font-grifter text-6xl md:text-7xl lg:text-8xl xl:text-9xl uppercase mb-6 md:mb-8 text-white animate-fade-in-up">
+      <div className="relative max-w-5xl mx-auto px-4 text-center z-10 flex flex-col items-center">
+        <h1 className="font-grifter text-6xl md:text-7xl lg:text-8xl xl:text-9xl uppercase mb-6 md:mb-8 text-white animate-fade-in-up leading-[0.95]">
           BIENVENIDOS
         </h1>
 
@@ -43,10 +43,10 @@ export default function Hero() {
         </a>
 
         {/* Logo + halo (gradiente) detrás */}
-        <div className="relative flex justify-center items-center animate-fade-in-up" style={{ animationDelay: "300ms" }}>
+        <div className="relative flex w-full justify-center items-center animate-fade-in-up" style={{ animationDelay: "300ms" }}>
           {/* Halo/Arco detrás del logo (VISIBLE y sin tocar Talentos) */}
           <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[35%] w-[900px] h-[520px] pointer-events-none opacity-70 z-0"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[35%] w-[520px] h-[300px] sm:w-[680px] sm:h-[380px] md:w-[760px] md:h-[430px] lg:w-[900px] lg:h-[520px] pointer-events-none opacity-70 z-0"
             style={{
               background:
                 "radial-gradient(ellipse 60% 55% at 50% 65%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.14) 22%, rgba(255,255,255,0.07) 42%, rgba(255,255,255,0.03) 55%, rgba(255,255,255,0) 68%)",
@@ -59,7 +59,7 @@ export default function Hero() {
             width={400}
             height={400}
             priority
-            className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain z-10"
+            className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-96 lg:h-96 object-contain z-10"
           />
         </div>
       </div>
