@@ -26,12 +26,19 @@ export default function Hero() {
       />
 
       <div className="relative max-w-5xl mx-auto px-4 text-center z-10 flex flex-col items-center">
-        <h1 className="font-grifter text-6xl md:text-7xl lg:text-8xl xl:text-9xl uppercase mb-6 md:mb-8 text-white animate-fade-in-up leading-[0.95]">
+        <h1
+          className="font-grifter uppercase mb-6 md:mb-8 text-white animate-fade-in-up"
+          style={{ fontSize: "clamp(3.25rem, 11vw, 7.2rem)", lineHeight: "0.93" }}
+        >
           BIENVENIDOS
         </h1>
 
-        <p className="font-helvetica text-white text-base md:text-lg max-w-2xl mx-auto mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-          Representamos a una variedad de personajes únicos que cautivan al público con su talento y carisma.
+        <p
+          className="font-helvetica text-white text-base md:text-lg max-w-2xl mx-auto mb-8 md:mb-10 animate-fade-in-up"
+          style={{ animationDelay: "100ms" }}
+        >
+          Representamos a una variedad de personajes únicos que cautivan al
+          público con su talento y carisma.
         </p>
 
         <a
@@ -43,7 +50,10 @@ export default function Hero() {
         </a>
 
         {/* Logo + halo (gradiente) detrás */}
-        <div className="relative flex w-full justify-center items-center animate-fade-in-up" style={{ animationDelay: "300ms" }}>
+        <div
+          className="relative flex w-full justify-center items-center animate-fade-in-up"
+          style={{ animationDelay: "300ms" }}
+        >
           {/* Halo/Arco detrás del logo (VISIBLE y sin tocar Talentos) */}
           <div
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[35%] w-[520px] h-[300px] sm:w-[680px] sm:h-[380px] md:w-[760px] md:h-[430px] lg:w-[900px] lg:h-[520px] pointer-events-none opacity-70 z-0"
