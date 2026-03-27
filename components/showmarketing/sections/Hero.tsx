@@ -26,7 +26,7 @@ export default function Hero() {
       />
 
       <div className="relative max-w-5xl mx-auto px-4 text-center z-10 flex flex-col items-center">
-        <h1 className="font-grifter text-6xl md:text-7xl lg:text-8xl xl:text-9xl uppercase mb-6 md:mb-8 text-white animate-fade-in-up">
+        <h1 className="font-grifter text-7xl md:text-7xl lg:text-8xl xl:text-9xl uppercase mb-6 md:mb-8 text-white animate-fade-in-up leading-[0.95]">
           BIENVENIDOS
         </h1>
 

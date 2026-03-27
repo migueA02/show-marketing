@@ -38,6 +38,7 @@ export default function AboutMerrySection() {
    * Controla visibilidad para animación al entrar en viewport.
    */
   const [isVisible, setIsVisible] = useState(false);
+  const [isBioOpen, setIsBioOpen] = useState(false);
   /**
    * Referencia al section para el IntersectionObserver.
    */
@@ -104,11 +105,11 @@ export default function AboutMerrySection() {
           </p>
         </div>
 
-        {/* CTA hacia biografía o landing externo */}
+        {/* CTA tipo acordeón para abrir/cerrar biografía */}
         <button
-          onClick={() => {
-            window.open("https://www.instagram.com/merry_oficial/", "_blank");
-          }}
+          onClick={() => setIsBioOpen((prev) => !prev)}
+          aria-expanded={isBioOpen}
+          aria-controls="merry-bio-content"
           className="bg-[#7e1ad2] text-white px-10 sm:px-14 md:px-18 lg:px-22 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg md:rounded-xl font-semibold text-sm sm:text-base md:text-lg uppercase tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-2 md:gap-3 pulse-cta"
           style={{ fontFamily: "Acumin Pro, sans-serif", fontWeight: 600 }}
         >
@@ -116,14 +117,41 @@ export default function AboutMerrySection() {
           <span style={{ fontFamily: "Acumin Pro, sans-serif", fontWeight: 700 }}>
             ¿QUIÉN ES DOÑA MERRY?
           </span>
-                    <Image
-                      src="/img/merry/Flecha.png"
-                      alt="Flechas"
-                      width={32}
-                      height={32}
-                      className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 object-contain"
-                    />
+          <Image
+            src="/img/merry/Flecha.png"
+            alt="Flechas"
+            width={32}
+            height={32}
+            className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 object-contain transition-transform duration-300 ${
+              isBioOpen ? "rotate-90" : "rotate-0"
+            }`}
+          />
         </button>
+
+        <div
+          id="merry-bio-content"
+          className={`w-full max-w-[900px] mt-5 sm:mt-6 overflow-hidden transition-all duration-500 ease-in-out ${
+            isBioOpen ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div
+            className="bg-[#7e1ad2]/95 text-white rounded-xl md:rounded-2xl px-5 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6"
+            style={{ fontFamily: "Acumin Pro, sans-serif", fontWeight: 600 }}
+          >
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed">
+              La gran ingeniera del hogar: esa es Doña Merry.
+            </p>
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed mt-3">
+              Merry es una líder en cada una de las áreas en las que se desempeña; las personas buscan su consejo y lo aplican en su vida diaria.
+            </p>
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed mt-3">
+              Es carismática, transparente y vulnerable. Además, es respetuosa y evita juzgar a los demás. Se distingue por ser honrada, trabajadora y generosa.
+            </p>
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed mt-3">
+              Es una mujer que no puede negar un saludo a nadie, que siempre irradia alegría.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -150,6 +150,7 @@ export default function Talents() {
         logo: "/img/showmarketing/junior logo.png",
         image: "/img/showmarketing/Img 3.png",
         link: "https://wa.me/50683054444",
+        logoClassName: "h-16 md:h-20 lg:h-24 w-auto max-w-full object-contain drop-shadow-lg",
         nameParts: {
           firstLine: "Junior Aporta",
         },
@@ -158,7 +159,7 @@ export default function Talents() {
         name: "Banda MR",
         logo: "/img/showmarketing/Logo banda-new.png",
         image: "/img/showmarketing/Banda MR img 4.png",
-        link: "https://www.instagram.com/bandaautonomanaranjo/",
+        link: "https://www.instagram.com/misaelramirezcr/",
         logoClassName: "h-16 md:h-20 lg:h-24 w-auto max-w-full object-contain drop-shadow-lg",
         nameParts: {
           firstLine: "Banda",
