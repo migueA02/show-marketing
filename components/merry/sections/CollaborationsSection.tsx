@@ -9,6 +9,7 @@ import React, { useEffect, useRef, useState } from "react";
 export default function CollaborationsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [arrowTop, setArrowTop] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
@@ -44,6 +45,19 @@ export default function CollaborationsSection() {
       if (sectionRef.current) observer.unobserve(sectionRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const updateArrowPosition = () => {
+      if (!carouselRef.current) return;
+      const slide = carouselRef.current.children[currentSlide] as HTMLElement;
+      if (!slide) return;
+      setArrowTop(slide.offsetTop + slide.offsetHeight / 2);
+    };
+
+    updateArrowPosition();
+    window.addEventListener("resize", updateArrowPosition);
+    return () => window.removeEventListener("resize", updateArrowPosition);
+  }, [currentSlide]);
 
   const goToSlide = (index: number) => {
     if (!carouselRef.current || isScrollingRef.current) return;
@@ -168,7 +182,7 @@ export default function CollaborationsSection() {
                */
               const frameWidth = video.format === "vertical"
                 ? "w-[58vw] min-w-[180px] max-w-[240px] sm:w-[50vw] sm:min-w-[210px] sm:max-w-[280px] lg:max-w-[320px]"
-                : "w-[82vw] min-w-[260px] max-w-[360px] sm:w-[78vw] sm:min-w-[300px] sm:max-w-[460px] lg:max-w-[760px]";
+                : "w-[84vw] max-w-[420px] min-w-[320px] lg:max-w-[760px]";
 
               const frameAspect = video.format === "vertical"
                 ? "aspect-[9/16]"
@@ -196,14 +210,16 @@ export default function CollaborationsSection() {
           {/* Navigation Arrows */}
           <button
             onClick={prevVideo}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/50 hover:bg-white/70 rounded-full flex items-center justify-center text-[#7E1AD2] transition-colors z-10 text-2xl font-bold"
+            className="absolute left-4 w-10 h-10 md:w-12 md:h-12 bg-white/50 hover:bg-white/70 rounded-full flex items-center justify-center text-[#7E1AD2] transition-colors z-10 text-2xl font-bold"
+            style={{ top: arrowTop ? `${arrowTop}px` : "50%", transform: "translateY(-50%)" }}
             aria-label="Video anterior"
           >
             ‹
           </button>
           <button
             onClick={nextVideo}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/50 hover:bg-white/70 rounded-full flex items-center justify-center text-[#7E1AD2] transition-colors z-10 text-2xl font-bold"
+            className="absolute right-4 w-10 h-10 md:w-12 md:h-12 bg-white/50 hover:bg-white/70 rounded-full flex items-center justify-center text-[#7E1AD2] transition-colors z-10 text-2xl font-bold"
+            style={{ top: arrowTop ? `${arrowTop}px` : "50%", transform: "translateY(-50%)" }}
             aria-label="Video siguiente"
           >
             ›
