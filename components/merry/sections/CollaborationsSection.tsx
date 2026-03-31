@@ -179,16 +179,16 @@ export default function CollaborationsSection() {
 
               /**
                * Frame unificado para todos los videos
+               * Controlado por altura responsiva en lugar de ancho para asegurar
+               * que verticales y horizontales compartan la misma línea visual.
                */
-              const frameWidth = video.format === "vertical"
-                ? "w-[58vw] min-w-[180px] max-w-[240px] sm:w-[50vw] sm:min-w-[210px] sm:max-w-[280px] lg:max-w-[320px]"
-                : "w-[84vw] max-w-[420px] min-w-[320px] lg:max-w-[760px]";
+              const frameHeight = "h-[220px] sm:h-[280px] md:h-[360px] lg:h-[450px]";
 
               const frameAspect = video.format === "vertical"
                 ? "aspect-[9/16]"
                 : "aspect-video";
 
-              const frameClass = `${frameWidth} ${frameAspect}`;
+              const frameClass = `${frameHeight} ${frameAspect}`;
 
               return (
                 <div
