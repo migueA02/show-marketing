@@ -124,10 +124,10 @@ export default function CollaborationsSection() {
     <section
       id="collaborations"
       ref={sectionRef}
-      className="w-full bg-[#7E1AD2] py-12 sm:py-16 md:py-20 lg:py-24"
+      className="w-full bg-[#7E1AD2] py-10 flex justify-center items-center"
     >
       <div
-        className={`w-full max-w-[1200px] mx-auto flex flex-col items-center px-4 md:px-8 lg:px-12 ${
+        className={`w-full flex flex-col items-center px-4 md:px-8 lg:px-12 gap-6 max-w-[1400px] ${
           isVisible ? "animate-fade-in-up" : "opacity-0"
         }`}
       >
@@ -149,15 +149,15 @@ export default function CollaborationsSection() {
           <div
             ref={carouselRef}
             onScroll={handleScroll}
-            className="flex items-center gap-3 sm:gap-4 md:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth lg:pb-0 snap-x snap-mandatory"
-            style={{
-              scrollbarWidth: "none",
+            className="flex items-center gap-3 sm:gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth snap-x snap-mandatory"
+            style={{ 
+              scrollbarWidth: "none", 
               msOverflowStyle: "none",
               WebkitOverflowScrolling: "touch",
               paddingLeft: "max(1rem, env(safe-area-inset-left))",
               paddingRight: "max(1rem, env(safe-area-inset-right))",
               scrollPaddingLeft: "max(1rem, env(safe-area-inset-left))",
-              scrollPaddingRight: "max(1rem, env(safe-area-inset-right))",
+              scrollPaddingRight: "max(1rem, env(safe-area-inset-right))"
             }}
           >
             {videos.map((video) => {
@@ -232,14 +232,14 @@ export default function CollaborationsSection() {
           `}</style>
         </div>
 
-        {/* Indicadores de paginación */}
-        <div className="flex gap-2 md:gap-3 justify-center flex-wrap">
+        {/* Paginación */}
+        <div className="flex gap-2 md:gap-3 justify-center">
           {videos.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all ${
-                currentSlide === index ? "bg-white scale-110" : "bg-white/60"
+              className={`w-4 h-4 md:w-4 md:h-4 rounded-full transition-all ${
+                currentSlide === index ? "bg-white" : "bg-white/60"
               } hover:bg-white/80 cursor-pointer`}
               aria-label={`Ir a slide ${index + 1}`}
             />
