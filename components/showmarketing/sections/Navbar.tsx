@@ -45,10 +45,10 @@ export default function Navbar() {
    */
   const getHeaderOffset = (): number => {
     if (typeof window === "undefined") return 0;
-    
+
     const header = document.querySelector("header");
     if (!header) return 0;
-    
+
     return header.offsetHeight;
   };
 
@@ -63,7 +63,8 @@ export default function Navbar() {
 
     const headerOffset = getHeaderOffset();
     const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset - 16;
+    const offsetPosition =
+      elementPosition + window.pageYOffset - headerOffset - 16;
 
     window.scrollTo({
       top: Math.max(0, offsetPosition),
@@ -91,13 +92,15 @@ export default function Navbar() {
   const scrollToSection = async (
     targetId: string,
     sec: string,
-    e: React.MouseEvent<HTMLAnchorElement>
+    e: React.MouseEvent<HTMLAnchorElement>,
   ) => {
     e.preventDefault();
 
     setIsOpen(false);
 
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve()),
+    );
 
     scrollToSectionWithOffset(targetId);
 
@@ -112,14 +115,20 @@ export default function Navbar() {
       <div className="flex w-full items-center justify-between px-6 py-6 md:px-8 md:py-7">
         {/* Logos */}
         <div className="flex items-center gap-4 md:gap-5 ml-2 sm:ml-3">
-          <Image
-            src="/img/showmarketing/show_Black.png"
-            alt="SHAW MARKETING producciones"
-            width={1000}
-            height={1000}
-            priority
-            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain"
-          />
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="focus:outline-none cursor-pointer"
+            aria-label="Ir al inicio"
+          >
+            <Image
+              src="/img/showmarketing/show_Black.png"
+              alt="SHAW MARKETING producciones"
+              width={1000}
+              height={1000}
+              priority
+              className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain"
+            />
+          </button>
         </div>
 
         {/* Desktop nav */}

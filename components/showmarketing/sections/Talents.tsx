@@ -127,7 +127,7 @@ export default function Talents() {
     () => [
       {
         name: "La Gran Ingeniera del Hogar",
-        logo: "/img/showmarketing/doña merry logo.png",
+        logo: "/img/showmarketing/dona-merry-logo.png",
         image: "/img/showmarketing/Img 1.png",
         link: "/merry",
         nameParts: {

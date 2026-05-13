@@ -127,7 +127,7 @@ export default function Navbar() {
       <div className="flex w-full items-center justify-between px-6 py-6 md:px-8 md:py-7">
         {/* Logos */}
         <div className="flex items-center gap-4 md:gap-5 ml-2 sm:ml-3">
-          <Link href="/showmarketing" aria-label="Ir a ShowMarketing">
+          <Link href="/" aria-label="Ir a ShowMarketing">
             <Image
               src="/img/misael/show_white.png"
               alt="ShowMarketing"

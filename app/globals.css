@@ -36,8 +36,11 @@
   font-display: swap;
 }
 
-
-
+@layer base {
+  button, [role="button"], a {
+    cursor: pointer;
+  }
+}
 
 :root {
   --background: #ffffff;
@@ -177,3 +180,4 @@ body {
 .font-acumin {
     font-family: "Acumin Pro", sans-serif;
   }
+
