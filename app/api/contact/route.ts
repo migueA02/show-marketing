@@ -1,65 +1,27 @@
-/**
- * API Route: /api/contact
- * 
- * Endpoint para procesar formularios de contacto desde las páginas:
- * - ShowMarketing (show-marketing)
- * - Doña Merry (merry)
- * - El Semental (misael)
- * 
- * @module app/api/contact/route
- * @description Maneja el envío de formularios de contacto mediante Resend API
- * 
- * REQUISITOS DE PRODUCCIÓN:
- * - Variable de entorno RESEND_API_KEY debe estar configurada
- * - Email de destino configurado en línea 335 (actualmente: jesusdma03@gmail.com)
- * 
- * SEGURIDAD:
- * - Sanitización de HTML para prevenir XSS
- * - Validación de tipos de datos
- * - Validación de formato de email
- * - Rechazo de caracteres de control no permitidos
- * - Límites de longitud de campos
- * 
- * VARIABLES DE ENTORNO REQUERIDAS:
- * - RESEND_API_KEY: API key de Resend para envío de emails
- * 
- * @see https://resend.com/docs/api-reference/emails/send-email
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// ============================================================================
-// CONSTANTES DE CONFIGURACIÓN
-// ============================================================================
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'jesusdma03@gmail.com';
 
-/**
- * Email de destino donde se recibirán todos los formularios de contacto
- * TODO: Mover a variable de entorno en producción para mayor flexibilidad
- */
-const CONTACT_EMAIL = 'jesusdma03@gmail.com';
-
-/**
- * Límites de longitud para campos del formulario (prevención de spam/DoS)
- */
+/** Longitud máxima de caracteres permitida por cada campo del formulario. */
 const FIELD_LIMITS = {
   nombre: 100,
-  apellido: 100,
+  empresa: 100,
   email: 255,
   telefono: 40,
   mensaje: 2000,
 } as const;
 
-/**
- * Tipos de formularios soportados y sus configuraciones
- */
+/** Unión de identificadores válidos de origen del formulario, uno por sitio cliente. */
 type FormSource = 'show-marketing' | 'merry' | 'misael';
 
+/** Metadatos de visualización asociados a un origen de formulario. */
 interface FormInfo {
   name: string;
   displayName: string;
 }
 
+/** Tokens de color de marca usados para personalizar el correo de notificación según el origen. */
 interface ColorScheme {
   headerGradient: string;
   headerText: string;
@@ -72,25 +34,17 @@ interface ColorScheme {
   footerBg: string;
   footerText: string;
   footerBorder: string;
+  headerSvg: string;
 }
 
-// ============================================================================
-// CONFIGURACIÓN DE FORMULARIOS
-// ============================================================================
-
-/**
- * Mapeo de fuentes de formulario a información de display
- */
+/** Mapeo de cada FormSource a sus metadatos de nombre para mostrar. */
 const FORM_NAMES: Record<FormSource, FormInfo> = {
   'show-marketing': { name: 'show-marketing', displayName: 'ShowMarketing' },
   'merry': { name: 'merry', displayName: 'Doña Merry' },
   'misael': { name: 'misael', displayName: 'El Semental' },
 };
 
-/**
- * Esquemas de colores personalizados por formulario para los emails
- * Cada formulario tiene su identidad visual única
- */
+/** Tokens de color por origen aplicados al correo de notificación en HTML. */
 const COLOR_SCHEMES: Record<FormSource, ColorScheme> = {
   'show-marketing': {
     headerGradient: 'linear-gradient(135deg, #000000 0%, #333333 100%)',
@@ -104,6 +58,7 @@ const COLOR_SCHEMES: Record<FormSource, ColorScheme> = {
     footerBg: '#ffffff',
     footerText: '#000000',
     footerBorder: '#000000',
+    headerSvg: '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="26" width="8" height="18" rx="2" fill="rgba(255,255,255,0.5)"/><rect x="16" y="16" width="8" height="28" rx="2" fill="rgba(255,255,255,0.8)"/><rect x="28" y="8" width="8" height="36" rx="2" fill="white"/><rect x="40" y="18" width="6" height="26" rx="2" fill="rgba(255,255,255,0.6)"/><line x1="2" y1="46" x2="46" y2="46" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/></svg>',
   },
   'merry': {
     headerGradient: 'linear-gradient(135deg, #ffd44a 0%, #ff29ab 100%)',
@@ -117,6 +72,7 @@ const COLOR_SCHEMES: Record<FormSource, ColorScheme> = {
     footerBg: '#ffffff',
     footerText: '#7e1ad2',
     footerBorder: '#67c7db',
+    headerSvg: '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 4L27.5 20.5L44 24L27.5 27.5L24 44L20.5 27.5L4 24L20.5 20.5L24 4Z" fill="white" fill-opacity="0.95"/><circle cx="24" cy="24" r="3.5" fill="white"/></svg>',
   },
   'misael': {
     headerGradient: 'linear-gradient(135deg, #854319 0%, #f69d28 100%)',
@@ -130,23 +86,15 @@ const COLOR_SCHEMES: Record<FormSource, ColorScheme> = {
     footerBg: '#000000',
     footerText: '#ffffff',
     footerBorder: '#854319',
+    headerSvg: '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 4L8 11V27C8 37 16 43.5 24 46C32 43.5 40 37 40 27V11L24 4Z" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M16 24L22 30.5L33 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   },
 };
 
-// ============================================================================
-// FUNCIONES UTILITARIAS
-// ============================================================================
-
 /**
- * Escapa caracteres HTML para prevenir ataques XSS
- * Convierte caracteres especiales a entidades HTML seguras
- * 
- * @param text - Texto a escapar
- * @returns Texto escapado seguro para usar en HTML
- * 
- * @example
- * escapeHtml('<script>alert("xss")</script>')
- * // Returns: '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
+ * Escapa caracteres HTML especiales para prevenir inyección en la salida del correo.
+ *
+ * @param text - Cadena de texto a escapar
+ * @returns Cadena con los caracteres especiales HTML reemplazados por sus entidades
  */
 function escapeHtml(text: string): string {
   return text
@@ -158,76 +106,65 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * Valida el formato de email usando expresión regular
- * 
- * @param email - Email a validar
- * @returns true si el email es válido, false en caso contrario
+ * Verifica que el correo electrónico tenga el formato básico usuario@dominio.tld.
+ *
+ * @param email - Dirección de correo electrónico a validar
+ * @returns `true` si el formato es válido, `false` en caso contrario
  */
 function isValidEmail(email: string): boolean {
-  // RFC 5322 simplified regex - suficiente para la mayoría de casos prácticos
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 /**
- * Valida que un campo de texto no contenga caracteres de control maliciosos
- * Permite saltos de línea (\n), tabs (\t) y retornos de carro (\r) normales
- * 
- * @param field - Campo de texto a validar
- * @returns true si el campo es válido, false si contiene caracteres peligrosos
+ * Rechaza cadenas que contengan caracteres de control ASCII no imprimibles ni espacios en blanco.
+ *
+ * @param field - Valor del campo de texto a validar
+ * @returns `true` si el campo no contiene caracteres no permitidos, `false` en caso contrario
  */
 function isValidTextField(field: string): boolean {
-  // Rechazar caracteres de control excepto \n, \r, \t (salto de línea, retorno, tab)
-  // \x00-\x08: caracteres de control iniciales
-  // \x0B-\x0C: tab vertical, form feed
-  // \x0E-\x1F: más caracteres de control
   return !/[\x00-\x08\x0B-\x0C\x0E-\x1F]/.test(field);
 }
 
 /**
- * Valida y sanitiza los datos del formulario
- * 
- * @param data - Datos del formulario a validar
- * @returns Objeto con isValid y errorMessage si hay error
+ * Valida los campos requeridos, juegos de caracteres, formato de correo y límites de longitud por campo.
+ *
+ * @param data - Objeto con los valores del formulario a validar
+ * @returns Objeto con `isValid` indicando el resultado y `errorMessage` con el motivo en caso de fallo
  */
 function validateFormData(data: {
   nombre: string;
-  apellido: string;
+  empresa: string;
   email: string;
   telefono: string;
   mensaje?: string;
 }): { isValid: boolean; errorMessage?: string } {
-  // Validación de campos requeridos
   if (!data.nombre?.trim() || !data.email?.trim() || !data.telefono?.trim()) {
     return { isValid: false, errorMessage: 'Por favor complete todos los campos requeridos' };
   }
 
-  // Validación de tipos (todos deben ser strings)
-  const textFields = [data.nombre, data.apellido, data.email, data.telefono, data.mensaje || ''];
+  const textFields = [data.nombre, data.empresa, data.email, data.telefono, data.mensaje || ''];
   for (const field of textFields) {
     if (typeof field !== 'string') {
       return { isValid: false, errorMessage: 'Los campos solo aceptan texto' };
     }
   }
 
-  // Validación de formato de email
   if (!isValidEmail(data.email)) {
     return { isValid: false, errorMessage: 'Por favor ingrese un email válido' };
   }
 
-  // Validación de caracteres peligrosos
   for (const field of textFields) {
     if (!isValidTextField(field)) {
       return { isValid: false, errorMessage: 'Los campos contienen caracteres no permitidos' };
     }
   }
 
-  // Validación de longitud de campos (prevención de spam/DoS)
   if (data.nombre.length > FIELD_LIMITS.nombre) {
     return { isValid: false, errorMessage: `El nombre no puede exceder ${FIELD_LIMITS.nombre} caracteres` };
   }
-  if (data.apellido.length > FIELD_LIMITS.apellido) {
-    return { isValid: false, errorMessage: `La empresa no puede exceder ${FIELD_LIMITS.apellido} caracteres` };
+  if (data.empresa.length > FIELD_LIMITS.empresa) {
+    return { isValid: false, errorMessage: `La empresa no puede exceder ${FIELD_LIMITS.empresa} caracteres` };
   }
   if (data.email.length > FIELD_LIMITS.email) {
     return { isValid: false, errorMessage: `El email no puede exceder ${FIELD_LIMITS.email} caracteres` };
@@ -243,28 +180,55 @@ function validateFormData(data: {
 }
 
 /**
- * Genera el template HTML del email personalizado según el formulario de origen
- * 
- * @param formData - Datos del formulario sanitizados
- * @param formInfo - Información del formulario (nombre, displayName)
- * @param colors - Esquema de colores del formulario
- * @returns HTML del email listo para enviar
+ * Verifica un token de reCAPTCHA v2 contra la API siteverify de Google.
+ *
+ * @param token - Token de respuesta generado por el widget de reCAPTCHA en el cliente
+ * @returns `true` si la verificación es exitosa, `false` en caso contrario
+ */
+async function verifyRecaptcha(token: string): Promise<boolean> {
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secretKey) {
+    console.warn('[CONTACT API] RECAPTCHA_SECRET_KEY not configured');
+    return false;
+  }
+
+  const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `secret=${encodeURIComponent(secretKey)}&response=${encodeURIComponent(token)}`,
+  });
+
+  const data = await res.json();
+  return data.success === true;
+}
+
+/**
+ * Construye el cuerpo HTML del correo de notificación de contacto con la marca correspondiente.
+ *
+ * @param formData - Datos del formulario enviado por el usuario
+ * @param formInfo - Metadatos de nombre del origen del formulario
+ * @param colors - Tokens de color de la marca asociada al origen
+ * @returns Cadena con el HTML completo del correo de notificación
  */
 function generateEmailHTML(
-  formData: { nombre: string; apellido: string; email: string; telefono: string; mensaje?: string },
+  formData: { nombre: string; empresa: string; email: string; telefono: string; mensaje?: string },
   formInfo: FormInfo,
   colors: ColorScheme
 ): string {
-  // Sanitizar todos los campos
   const safeNombre = escapeHtml(formData.nombre.trim());
-  const safeApellido = escapeHtml(formData.apellido.trim());
-  const safeNombreCompleto = [safeNombre, safeApellido].filter(Boolean).join(' ');
+  const safeEmpresa = escapeHtml(formData.empresa.trim());
   const safeEmail = escapeHtml(formData.email.trim());
   const safeTelefono = escapeHtml(formData.telefono.trim());
   const safeMensaje = formData.mensaje ? escapeHtml(formData.mensaje.trim()).replace(/\n/g, '<br>') : '';
   const safeSource = escapeHtml(formInfo.displayName);
 
-  // Template HTML responsive y compatible con clientes de email
+  const ic = colors.sourceLabel;
+  const personIcon = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="5.5" r="3" stroke="${ic}" stroke-width="1.5"/><path d="M2 17c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="${ic}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  const buildingIcon = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="12" height="11" rx="1" stroke="${ic}" stroke-width="1.5"/><path d="M6 16v-4h6v4" stroke="${ic}" stroke-width="1.5"/><path d="M3 8l6-5 6 5" stroke="${ic}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const emailIcon = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="4" width="16" height="11" rx="1.5" stroke="${ic}" stroke-width="1.5"/><path d="M1 7l8 4.5L17 7" stroke="${ic}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  const phoneIcon = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.4 1H3C1.9 1 1 1.9 1 3c0 7.7 6.3 14 14 14 1.1 0 2-.9 2-2v-2.4l-3-1.3-1.3 1.9c-2-.9-3.9-2.8-4.8-4.8L9.7 7 8.4 4 5.4 1z" stroke="${ic}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+  const messageIcon = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1h16v12H6l-5 4V1z" stroke="${ic}" stroke-width="1.5" stroke-linejoin="round"/><path d="M5 6h8M5 8.5h5" stroke="${ic}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -274,135 +238,131 @@ function generateEmailHTML(
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Nuevo contacto desde ${safeSource}</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background-color:#efefef;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#efefef;padding:40px 16px;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; max-width: 600px;">
-          <!-- Header -->
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.13);">
+
+          <!-- HEADER -->
           <tr>
-            <td style="background: ${colors.headerGradient}; padding: 30px 40px; text-align: center;">
-              <h1 style="margin: 0; color: ${colors.headerText}; font-size: 24px; font-weight: 700; letter-spacing: 1px;">
-                NUEVO CONTACTO
-              </h1>
-              <p style="margin: 10px 0 0 0; color: ${colors.headerText}; font-size: 14px; opacity: 0.9;">
-                Formulario de ${safeSource}
-              </p>
-            </td>
-          </tr>
-          
-          <!-- Content -->
-          <tr>
-            <td style="padding: 40px;">
+            <td style="background:${colors.headerGradient};padding:36px 40px 32px;text-align:center;">
               <table width="100%" cellpadding="0" cellspacing="0">
-                <!-- Información del formulario -->
                 <tr>
-                  <td style="padding-bottom: 20px; border-bottom: 2px solid ${colors.borderColor}; margin-bottom: 20px;">
-                    <p style="margin: 0 0 8px 0; color: ${colors.sourceLabel}; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                      Origen del Formulario
-                    </p>
-                    <p style="margin: 0; color: ${colors.sourceValue}; font-size: 16px; font-weight: 600;">
-                      ${safeSource}
-                    </p>
+                  <td align="center" style="padding-bottom:16px;">${colors.headerSvg}</td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <h1 style="margin:0 0 14px 0;color:${colors.headerText};font-size:26px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;">NUEVO CONTACTO</h1>
+                    <span style="display:inline-block;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.45);color:${colors.headerText};font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 18px;border-radius:20px;">${safeSource}</span>
                   </td>
                 </tr>
-                
-                <!-- Nombre -->
-                <tr>
-                  <td style="padding: 20px 0; border-bottom: 1px solid ${colors.borderColor};">
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="120" style="vertical-align: top;">
-                          <p style="margin: 0; color: ${colors.sourceLabel}; font-size: 14px; font-weight: 600;">
-                            Nombre:
-                          </p>
-                        </td>
-                        <td style="vertical-align: top;">
-                          <p style="margin: 0; color: #333333; font-size: 14px;">
-                            ${safeNombreCompleto}
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                
-                <!-- Email -->
-                <tr>
-                  <td style="padding: 20px 0; border-bottom: 1px solid ${colors.borderColor};">
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="120" style="vertical-align: top;">
-                          <p style="margin: 0; color: ${colors.sourceLabel}; font-size: 14px; font-weight: 600;">
-                            Email:
-                          </p>
-                        </td>
-                        <td style="vertical-align: top;">
-                          <p style="margin: 0;">
-                            <a href="mailto:${safeEmail}" style="color: ${colors.linkColor}; text-decoration: none; font-size: 14px;">
-                              ${safeEmail}
-                            </a>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                
-                <!-- Teléfono -->
-                <tr>
-                  <td style="padding: 20px 0; border-bottom: 1px solid ${colors.borderColor};">
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="120" style="vertical-align: top;">
-                          <p style="margin: 0; color: ${colors.sourceLabel}; font-size: 14px; font-weight: 600;">
-                            Teléfono:
-                          </p>
-                        </td>
-                        <td style="vertical-align: top;">
-                          <p style="margin: 0;">
-                            <a href="tel:${safeTelefono}" style="color: ${colors.linkColor}; text-decoration: none; font-size: 14px;">
-                              ${safeTelefono}
-                            </a>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                
-                ${safeMensaje ? `
-                <!-- Mensaje -->
-                <tr>
-                  <td style="padding: 20px 0;">
-                    <p style="margin: 0 0 10px 0; color: ${colors.sourceLabel}; font-size: 14px; font-weight: 600;">
-                      Mensaje:
-                    </p>
-                    <div style="background-color: ${colors.messageBg}; padding: 15px; border-radius: 4px; border-left: 4px solid ${colors.messageBorder};">
-                      <p style="margin: 0; color: #333333; font-size: 14px; line-height: 1.6;">
-                        ${safeMensaje}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-                ` : ''}
               </table>
             </td>
           </tr>
-          
-          <!-- Footer -->
+
+          <!-- BODY -->
           <tr>
-            <td style="background-color: ${colors.footerBg}; padding: 30px 40px; border-top: 1px solid ${colors.footerBorder};">
-              <p style="margin: 0 0 15px 0; color: ${colors.footerText}; font-size: 13px; line-height: 1.6;">
-                <strong>Para responder a este contacto:</strong><br>
-                Simplemente responde a este email y tu respuesta llegará directamente a <strong>${safeEmail}</strong>
+            <td style="padding:32px 40px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+
+                <!-- Nombre -->
+                <tr>
+                  <td style="padding:16px 0;border-bottom:1px solid #f0f0f0;">
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="30" style="vertical-align:top;padding-top:3px;">${personIcon}</td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 4px 0;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaaaaa;">NOMBRE</p>
+                          <p style="margin:0;font-size:16px;font-weight:600;color:#1a1a1a;">${safeNombre}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                ${safeEmpresa ? `
+                <!-- Empresa -->
+                <tr>
+                  <td style="padding:16px 0;border-bottom:1px solid #f0f0f0;">
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="30" style="vertical-align:top;padding-top:3px;">${buildingIcon}</td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 4px 0;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaaaaa;">EMPRESA</p>
+                          <p style="margin:0;font-size:16px;font-weight:600;color:#1a1a1a;">${safeEmpresa}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                ` : ''}
+
+                <!-- Correo -->
+                <tr>
+                  <td style="padding:16px 0;border-bottom:1px solid #f0f0f0;">
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="30" style="vertical-align:top;padding-top:3px;">${emailIcon}</td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 4px 0;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaaaaa;">CORREO</p>
+                          <p style="margin:0;"><a href="mailto:${safeEmail}" style="font-size:16px;font-weight:600;color:${colors.linkColor};text-decoration:none;">${safeEmail}</a></p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Teléfono -->
+                <tr>
+                  <td style="padding:16px 0;${safeMensaje ? 'border-bottom:1px solid #f0f0f0;' : ''}">
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="30" style="vertical-align:top;padding-top:3px;">${phoneIcon}</td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 4px 0;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaaaaa;">TELÉFONO</p>
+                          <p style="margin:0;"><a href="tel:${safeTelefono}" style="font-size:16px;font-weight:600;color:${colors.linkColor};text-decoration:none;">${safeTelefono}</a></p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                ${safeMensaje ? `
+                <!-- Mensaje -->
+                <tr>
+                  <td style="padding:16px 0 0 0;">
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="30" style="vertical-align:top;padding-top:3px;">${messageIcon}</td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaaaaa;">MENSAJE</p>
+                          <div style="background-color:${colors.messageBg};border-left:3px solid ${colors.messageBorder};padding:14px 16px;border-radius:0 6px 6px 0;">
+                            <p style="margin:0;font-size:15px;color:#333333;line-height:1.7;">${safeMensaje}</p>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                ` : ''}
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td style="background-color:${colors.footerBg};padding:24px 40px;border-top:1px solid ${colors.footerBorder};">
+              <p style="margin:0 0 12px 0;font-size:13px;color:${colors.footerText};line-height:1.6;">
+                <strong>Para responder:</strong> Responde este email directamente &mdash; llegará a <strong>${safeEmail}</strong>
               </p>
-              <p style="margin: 0; color: ${colors.footerText}; font-size: 12px; border-top: 1px solid ${colors.footerBorder}; padding-top: 15px; opacity: 0.8;">
-                Este email fue generado automáticamente desde el formulario de contacto de <strong>${safeSource}</strong><br>
-                Fecha: ${new Date().toLocaleString('es-CR', { dateStyle: 'long', timeStyle: 'short' })}
+              <p style="margin:0;font-size:11px;color:${colors.footerText};opacity:0.6;padding-top:12px;border-top:1px solid ${colors.footerBorder};">
+                Formulario de contacto &middot; ${safeSource} &middot; ${new Date().toLocaleString('es-CR', { dateStyle: 'long', timeStyle: 'short' })}
               </p>
             </td>
           </tr>
+
         </table>
       </td>
     </tr>
@@ -413,18 +373,16 @@ function generateEmailHTML(
 }
 
 /**
- * Genera la versión texto plano del email (fallback para clientes de email que no soportan HTML)
- * 
- * @param formData - Datos del formulario
- * @param formInfo - Información del formulario
- * @returns Texto plano del email
+ * Construye el cuerpo en texto plano del correo de notificación de contacto como alternativa al HTML.
+ *
+ * @param formData - Datos del formulario enviado por el usuario
+ * @param formInfo - Metadatos de nombre del origen del formulario
+ * @returns Cadena con el contenido en texto plano del correo de notificación
  */
 function generateEmailText(
-  formData: { nombre: string; apellido: string; email: string; telefono: string; mensaje?: string },
+  formData: { nombre: string; empresa: string; email: string; telefono: string; mensaje?: string },
   formInfo: FormInfo
 ): string {
-  const fullName = [formData.nombre.trim(), formData.apellido.trim()].filter(Boolean).join(' ');
-
   return `
 NUEVO CONTACTO - Formulario de ${formInfo.displayName}
 
@@ -436,9 +394,9 @@ ${formInfo.displayName}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 NOMBRE
-${fullName}
+${formData.nombre.trim()}
 
-EMAIL
+${formData.empresa.trim() ? `EMPRESA\n${formData.empresa.trim()}\n\n` : ''}EMAIL
 ${formData.email.trim()}
 
 TELÉFONO
@@ -455,35 +413,13 @@ Fecha: ${new Date().toLocaleString('es-CR', { dateStyle: 'long', timeStyle: 'sho
   `.trim();
 }
 
-// ============================================================================
-// API ROUTE HANDLER
-// ============================================================================
-
 /**
- * POST /api/contact
- * 
- * Procesa formularios de contacto desde las páginas de ShowMarketing, Doña Merry y El Semental
- * 
- * @param request - Request de Next.js con los datos del formulario
- * @returns NextResponse con resultado del procesamiento
- * 
- * @example
- * POST /api/contact
- * Body: {
- *   "nombre": "Juan",
- *   "apellido": "Pérez",
- *   "email": "juan@example.com",
- *   "telefono": "12345678",
- *   "mensaje": "Mensaje opcional",
- *   "source": "show-marketing" // opcional, default: "show-marketing"
- * }
- * 
- * Response 200: { "message": "Mensaje enviado exitosamente..." }
- * Response 400: { "error": "Mensaje de error de validación" }
- * Response 500: { "error": "Error al procesar el formulario..." }
+ * Maneja el envío del formulario de contacto: valida los datos, verifica el reCAPTCHA y envía un correo de notificación mediante Resend.
+ *
+ * @param request - Objeto de solicitud HTTP entrante de Next.js
+ * @returns Respuesta JSON con mensaje de éxito o error y el código de estado correspondiente
  */
 export async function POST(request: NextRequest) {
-  // Headers de respuesta para producción
   const headers = new Headers({
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
@@ -493,28 +429,43 @@ export async function POST(request: NextRequest) {
   });
 
   try {
-    // Parse del body JSON
     let body: {
       nombre?: string;
-      apellido?: string;
+      empresa?: string;
       email?: string;
       telefono?: string;
       mensaje?: string;
       source?: string;
+      captcha?: string;
     };
 
     try {
       body = await request.json();
-    } catch (parseError) {
+    } catch {
       return NextResponse.json(
         { error: 'Formato de solicitud inválido. Por favor verifique los datos enviados.' },
         { status: 400, headers }
       );
     }
 
-    const { nombre, apellido, email, telefono, mensaje, source } = body;
+    const { nombre, empresa, email, telefono, mensaje, source, captcha } = body;
 
-    // Detectar y validar el origen del formulario
+    // Verificar reCAPTCHA
+    if (!captcha) {
+      return NextResponse.json(
+        { error: 'Por favor, verifica que no eres un robot.' },
+        { status: 400, headers }
+      );
+    }
+
+    const captchaValid = await verifyRecaptcha(captcha);
+    if (!captchaValid) {
+      return NextResponse.json(
+        { error: 'Verificación de reCAPTCHA fallida. Por favor intente de nuevo.' },
+        { status: 400, headers }
+      );
+    }
+
     const formSource: FormSource = (source && ['show-marketing', 'merry', 'misael'].includes(source))
       ? (source as FormSource)
       : 'show-marketing';
@@ -522,10 +473,9 @@ export async function POST(request: NextRequest) {
     const formInfo = FORM_NAMES[formSource];
     const colors = COLOR_SCHEMES[formSource];
 
-    // Validación completa de los datos
     const validation = validateFormData({
       nombre: nombre || '',
-      apellido: apellido || '',
+      empresa: empresa || '',
       email: email || '',
       telefono: telefono || '',
       mensaje: mensaje,
@@ -538,39 +488,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Datos validados y sanitizados
     const formData = {
       nombre: (nombre as string).trim(),
-      apellido: (apellido || '').trim(),
-      email: (email as string).trim().toLowerCase(), // Normalizar email a lowercase
+      empresa: (empresa || '').trim(),
+      email: (email as string).trim().toLowerCase(),
       telefono: (telefono as string).trim(),
       mensaje: mensaje?.trim() || '',
     };
 
-    const contactName = [formData.nombre, formData.apellido].filter(Boolean).join(' ');
-
-    // ========================================================================
-    // ENVÍO DE EMAIL (Resend API)
-    // ========================================================================
-
     const resendApiKey = process.env.RESEND_API_KEY;
 
     if (!resendApiKey) {
-      // En desarrollo: registrar en consola
-      // En producción: considerar usar un servicio de logging estructurado
       console.warn('[CONTACT API] RESEND_API_KEY no configurada. Email no enviado.', {
         formSource,
         email: formData.email,
         timestamp: new Date().toISOString(),
       });
 
-      // En producción, podrías querer retornar un error aquí
-      // Por ahora, retornamos éxito para no romper el flujo del usuario
       return NextResponse.json(
-        {
-          message: 'Mensaje recibido. Nos pondremos en contacto pronto.',
-          warning: 'Email service no configurado',
-        },
+        { message: 'Mensaje recibido. Nos pondremos en contacto pronto.' },
         { status: 200, headers }
       );
     }
@@ -578,16 +514,14 @@ export async function POST(request: NextRequest) {
     try {
       const resend = new Resend(resendApiKey);
 
-      // Generar templates de email
       const emailHtml = generateEmailHTML(formData, formInfo, colors);
       const emailText = generateEmailText(formData, formInfo);
 
-      // Enviar email usando Resend
       await resend.emails.send({
-        from: 'ShowMarketing <onboarding@resend.dev>', // Dominio verificado de Resend
+        from: `ShowMarketing <${process.env.RESEND_FROM_EMAIL}>`,
         to: CONTACT_EMAIL,
-        replyTo: `${contactName} <${formData.email}>`,
-        subject: `Nuevo contacto desde ${formInfo.displayName} - ${contactName}`,
+        replyTo: `${formData.nombre} <${formData.email}>`,
+        subject: `Nuevo contacto desde ${formInfo.displayName} - ${formData.nombre}`,
         html: emailHtml,
         text: emailText,
         headers: {
@@ -597,71 +531,48 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Log de éxito (en producción, usar servicio de logging estructurado)
       console.log('[CONTACT API] Email enviado exitosamente', {
         formSource,
         email: formData.email,
         timestamp: new Date().toISOString(),
       });
 
-    } catch (emailError: any) {
-      // Log del error sin exponer detalles sensibles al cliente
+    } catch (emailError: unknown) {
+      const err = emailError as { name?: string; message?: string };
       console.error('[CONTACT API] Error enviando email:', {
         formSource,
         email: formData.email,
-        error: emailError.name || 'UnknownError',
-        message: emailError.message,
+        error: err.name || 'UnknownError',
+        message: err.message,
         timestamp: new Date().toISOString(),
       });
-
-      // En producción, podrías querer:
-      // 1. Enviar a un servicio de logging (Sentry, LogRocket, etc.)
-      // 2. Notificar a un canal de alertas (Slack, PagerDuty, etc.)
-      // 3. Guardar en una cola para reintentos
-
-      // Por ahora, no fallamos el request para no romper la UX
-      // El usuario recibe confirmación aunque el email falle
     }
 
-    // ========================================================================
-    // RESPUESTA EXITOSA
-    // ========================================================================
-
     return NextResponse.json(
-      {
-        message: 'Mensaje enviado exitosamente. Nos pondremos en contacto pronto.',
-      },
+      { message: 'Mensaje enviado exitosamente. Nos pondremos en contacto pronto.' },
       { status: 200, headers }
     );
 
   } catch (error) {
-    // Manejo de errores inesperados
     console.error('[CONTACT API] Error inesperado procesando formulario:', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
     });
 
-    // En producción, no exponer detalles del error al cliente
     return NextResponse.json(
-      {
-        error: 'Error al procesar el formulario. Por favor intente más tarde.',
-      },
+      { error: 'Error al procesar el formulario. Por favor intente más tarde.' },
       { status: 500, headers }
     );
   }
 }
 
 /**
- * OPTIONS /api/contact
- * 
- * Maneja preflight requests para CORS (si es necesario en el futuro)
- * 
- * @param request - Request de Next.js
- * @returns NextResponse con headers CORS
+ * Responde a las solicitudes de preflight CORS para el endpoint de contacto.
+ *
+ * @returns Respuesta vacía con los encabezados CORS correspondientes y código 204
  */
-export async function OPTIONS(request: NextRequest) {
-  return new NextResponse(null, {
+export async function OPTIONS() {
+  return new Response(null, {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': '*',

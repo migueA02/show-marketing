@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+/** Registro de país normalizado utilizado en todo el componente. */
 type Country = {
   code: string;
   name: string;
@@ -10,6 +11,7 @@ type Country = {
   flagImage: string;
 };
 
+/** Forma cruda devuelta por la API de restcountries.com v3.1 para los campos solicitados. */
 type RestCountryApiItem = {
   cca2?: string;
   flag?: string;
@@ -26,6 +28,7 @@ type RestCountryApiItem = {
   };
 };
 
+/** Lista fija de países comunes mostrada de inmediato mientras carga la API. */
 const FALLBACK_COUNTRIES: Country[] = [
   { code: "CR", name: "Costa Rica", dialCode: "+506", flagEmoji: "🇨🇷", flagImage: "" },
   { code: "US", name: "Estados Unidos", dialCode: "+1", flagEmoji: "🇺🇸", flagImage: "" },
@@ -44,6 +47,12 @@ const FALLBACK_COUNTRIES: Country[] = [
 const REST_COUNTRIES_URL =
   "https://restcountries.com/v3.1/all?fields=cca2,name,idd,flag,flags";
 
+/**
+ * Convierte un código ISO 3166-1 alfa-2 en el emoji de bandera de indicador regional correspondiente.
+ *
+ * @param code - Código de país en mayúsculas de dos letras (por ejemplo, "CR")
+ * @returns Emoji de bandera del país, o "🌍" si el código no es válido
+ */
 function countryCodeToFlagEmoji(code: string): string {
   if (!/^[A-Z]{2}$/.test(code)) {
     return "🌍";
@@ -53,6 +62,12 @@ function countryCodeToFlagEmoji(code: string): string {
   return String.fromCodePoint(...code.split("").map((char) => char.charCodeAt(0) + offset));
 }
 
+/**
+ * Concatena la raíz IDD y el primer sufijo en una cadena de código de marcación (por ejemplo, "+1").
+ *
+ * @param idd - Objeto IDD de la API con `root` y `suffixes` opcionales
+ * @returns Cadena de código de marcación, o cadena vacía si no hay raíz disponible
+ */
 function buildDialCode(idd?: { root?: string; suffixes?: string[] }): string {
   if (!idd?.root) {
     return "";
@@ -62,6 +77,12 @@ function buildDialCode(idd?: { root?: string; suffixes?: string[] }): string {
   return `${idd.root}${suffix}`.trim();
 }
 
+/**
+ * Transforma el arreglo crudo de la API en registros Country ordenados, descartando entradas con datos faltantes.
+ *
+ * @param items - Arreglo de elementos crudos devueltos por la API de restcountries
+ * @returns Arreglo de registros Country válidos ordenados alfabéticamente por nombre
+ */
 function mapApiCountries(items: RestCountryApiItem[]): Country[] {
   return items
     .map((item) => {
@@ -81,6 +102,7 @@ function mapApiCountries(items: RestCountryApiItem[]): Country[] {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/** Props de CountryPhoneInput — el llamador controla el valor y recibe la cadena completa "+codigoPais numeroLocal" a través de onChange. */
 type CountryPhoneInputProps = {
   value: string;
   onChange: (value: string) => void;
@@ -93,6 +115,9 @@ type CountryPhoneInputProps = {
   inputClassName: string;
 };
 
+/**
+ * Selector de código de país con búsqueda combinado con un campo de número local; emite el valor combinado en formato E.164.
+ */
 export default function CountryPhoneInput({
   value,
   onChange,
