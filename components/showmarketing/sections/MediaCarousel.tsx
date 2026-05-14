@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 export default function MediaCarousel() {
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
