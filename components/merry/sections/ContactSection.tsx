@@ -6,43 +6,7 @@ import ReCAPTCHA from "react-google-recaptcha"; // <-- Imported ReCAPTCHA
 import CountryPhoneInput from "../../common/CountryPhoneInput";
 
 /**
- * ContactSection Component
- *
- * Objetivo: Capturar información de contacto de usuarios interesados mediante
- * formulario accesible con validación básica y envío a backend (a implementar).
- *
- * Características visuales:
- * - Fondo: Cyan corporativo (#67c7db) para diferenciación de secciones
- * - Título: Colfax Black en morado (#7e1ad2), tamaño responsive (48px-80px)
- * - Inputs: Blancos con border 1px gray-200, focus ring 2px #7e1ad2
- * - Placeholder: Texto morado (#7e1ad2) con font-bold para legibilidad
- * - Botón: Morado con padding clamp, icono flecha integrada, pulse-cta hover
- *
- * Estructura del formulario:
- * - Nombre (text input) - campo requerido para identificación
- * - Apellido (text input) - complemento de identificación
- * - Correo (email input) - validación HTML5 type="email"
- * - Teléfono (tel input) - con imagen bandera Costa Rica (#67c7db) precediendo
- * → Padding-left: pl-12 para acomodar imagen (w-6/h-6)
- * → Image estilo Costa Rica.png con height: auto
- * - Información adicional (textarea, 4 rows) - comentarios generales
- *
- * Responsive:
- * - Mobile: max-w-sm, px-4, inputs py-3, gap-4
- * - Tablet (md+): max-w-md, px-5 py-4, gap-5
- * - Desktop (lg+): max-w-lg, px-6 py-5, gap-6
- *
- * Accesibilidad:
- * - Placeholder descriptivos con texto morado (#7e1ad2)
- * - Focus ring 2px #7e1ad2 en todos los inputs
- * - Semántica form con button type="submit"
- * - Alt text "Bandera de Costa Rica" en Image
- * - Estructura de campos clara y secuencial
- *
- * Notas de desarrollo:
- * - onClick handler vacío en botón (e.preventDefault()) - implementar lógica de envío
- * - Envío a backend pendiente (API endpoint a definir)
- * - Validación client-side opcional (required attributes no incluidos)
+ * Formulario de contacto de Doña Merry que envía los datos a /api/contact con el origen "merry".
  */
 export default function ContactSection() {
   /**
@@ -61,7 +25,7 @@ export default function ContactSection() {
   // Estados del formulario
   const [formData, setFormData] = useState({
     nombre: "",
-    apellido: "",
+    empresa: "",
     email: "",
     telefono: "",
     mensaje: "",
@@ -165,7 +129,7 @@ export default function ContactSection() {
         // Limpiar formulario
         setFormData({
           nombre: "",
-          apellido: "",
+          empresa: "",
           email: "",
           telefono: "",
           mensaje: "",
@@ -236,8 +200,8 @@ export default function ContactSection() {
           {/* Apellido */}
           <input
             type="text"
-            name="apellido"
-            value={formData.apellido}
+            name="empresa"
+            value={formData.empresa}
             onChange={handleInputChange}
             placeholder="Empresa (opcional)"
             aria-label="Empresa (opcional)"

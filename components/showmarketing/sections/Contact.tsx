@@ -4,6 +4,9 @@ import { useEffect, useRef, useState, FormEvent } from "react";
 import ReCAPTCHA from "react-google-recaptcha"; // <-- Imported ReCAPTCHA
 import CountryPhoneInput from "../../common/CountryPhoneInput";
 
+/**
+ * Formulario de contacto de ShowMarketing que envía los datos a /api/contact con el origen "show-marketing".
+ */
 export default function Contact() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -16,7 +19,7 @@ export default function Contact() {
   // Estados del formulario
   const [formData, setFormData] = useState({
     nombre: "",
-    apellido: "",
+    empresa: "",
     email: "",
     telefono: "",
     mensaje: "",
@@ -129,7 +132,7 @@ export default function Contact() {
         // Limpiar formulario
         setFormData({
           nombre: "",
-          apellido: "",
+          empresa: "",
           email: "",
           telefono: "",
           mensaje: "",
@@ -198,8 +201,8 @@ export default function Contact() {
           {/* Apellido */}
           <input
             type="text"
-            name="apellido"
-            value={formData.apellido}
+            name="empresa"
+            value={formData.empresa}
             onChange={handleInputChange}
             placeholder="Empresa (opcional)"
             aria-label="Empresa (opcional)"

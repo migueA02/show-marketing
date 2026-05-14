@@ -5,6 +5,9 @@ import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 import ReCAPTCHA from "react-google-recaptcha"; // <-- Importamos ReCAPTCHA
 import CountryPhoneInput from "../../common/CountryPhoneInput";
 
+/**
+ * Formulario de contacto de El Semental que envía los datos a /api/contact con el origen "misael".
+ */
 export default function ContactSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -16,7 +19,7 @@ export default function ContactSection() {
   // Estados del formulario
   const [formData, setFormData] = useState({
     nombre: "",
-    apellido: "",
+    empresa: "",
     email: "",
     telefono: "",
     mensaje: "",
@@ -120,7 +123,7 @@ export default function ContactSection() {
         // Limpiar formulario
         setFormData({
           nombre: "",
-          apellido: "",
+          empresa: "",
           email: "",
           telefono: "",
           mensaje: "",
@@ -184,8 +187,8 @@ export default function ContactSection() {
           {/* Apellido */}
           <input
             type="text"
-            name="apellido"
-            value={formData.apellido}
+            name="empresa"
+            value={formData.empresa}
             onChange={handleInputChange}
             placeholder="Empresa (opcional)"
             aria-label="Empresa (opcional)"
@@ -219,7 +222,6 @@ export default function ContactSection() {
           {/* Cuéntenos su idea */}
           <textarea
             name="mensaje"
-            required
             value={formData.mensaje}
             onChange={handleInputChange}
             placeholder="Cuéntenos su idea"
