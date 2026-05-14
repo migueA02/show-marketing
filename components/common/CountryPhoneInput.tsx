@@ -132,6 +132,7 @@ function validatePhone(local: string, countryCode: string): string {
   return "";
 }
 
+
 /** Props de CountryPhoneInput — el llamador controla el valor y recibe "+codigoPais numeroLocal" en onChange. */
 type CountryPhoneInputProps = {
   value: string;
